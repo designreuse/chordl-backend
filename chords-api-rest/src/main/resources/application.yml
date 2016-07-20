@@ -1,0 +1,10 @@
+server:
+  contextPath: /api
+  port: 8081
+  compression:
+    enabled: true
+    mimeTypes: text/html,text/xml,text/plain,application/json,application/xml
+
+logging:
+  config: classpath:logback-develop.xml
+  path: tmp/logs
