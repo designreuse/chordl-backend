@@ -39,6 +39,8 @@
         <junit.version>4.11</junit.version>
         <lombok.version>1.16.4</lombok.version>
         <swagger.version>2.0.3</swagger.version>
+        <jackson.version>2.5.4</jackson.version>
+        <flyway.clean>false</flyway.clean>
     </properties>
 
     <dependencyManagement>
@@ -52,6 +54,22 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
 
             <!-- Test -->

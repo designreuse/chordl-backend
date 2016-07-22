@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/chords
+    username: chords_api
+    password: chords_api
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        show_sql: false
+        cache:
+          use_second_level_cache: false
+          use_structured_entities: true
+        generate_statistics: false
+
+flyway.db.clean: ${flyway.clean:false}
+

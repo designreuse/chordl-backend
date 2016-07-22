@@ -8,3 +8,10 @@ server:
 logging:
   config: classpath:logback-develop.xml
   path: tmp/logs
+
+spring:
+  jackson:
+    mapper.default_view_inclusion: false
+    serialization:
+      write_dates_as_timestamps: false
+      write_bigdecimal_as_plain: true
