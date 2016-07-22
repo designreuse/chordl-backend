@@ -1,24 +1,23 @@
 package com.robotnec.chords.web;
 
-import com.robotnec.chords.model.Song;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import com.robotnec.chords.persistence.entity.Song;
+import com.robotnec.chords.persistence.repository.SongRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/song")
 public class SongsController {
 
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping("/{songId}")
-    public ResponseEntity<Song> thing(@PathVariable("songId") String songId) {
-        return new ResponseEntity<>(new Song(), HttpStatus.OK);
-    }
+    @Autowired
+    SongRepository songRepository;
 
-    @RequestMapping("/test")
-    public String test() {
-        return "OK";
+    @RequestMapping(value = "/songs", method = RequestMethod.GET)
+    public String getSongs() {
+        songRepository.save(new Song(0, "Hello", "askldjalskjd"));
+        return songRepository.findAll().toString();
     }
 
 }

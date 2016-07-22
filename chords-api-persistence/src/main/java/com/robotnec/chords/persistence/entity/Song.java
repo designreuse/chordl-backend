@@ -7,7 +7,10 @@ import javax.persistence.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "songs")
+@Table(name = "song")
+@AllArgsConstructor
+@ToString
+@NoArgsConstructor
 public class Song extends BaseEntity {
 
     @Id
@@ -19,5 +22,5 @@ public class Song extends BaseEntity {
     private String title;
 
     @Column(name = "lyrics")
-    private Integer lyrics;
+    private String lyrics;
 }

@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @EqualsAndHashCode
 @Getter
@@ -18,20 +19,20 @@ public abstract class BaseEntity {
 
     @DateTimeFormat(style = "M-")
     @Column(name = "created_date")
-    private LocalDateTime createdDate = LocalDateTime.now();
+    private Date createdDate = new Date();
 
     @DateTimeFormat(style = "M-")
     @Column(name = "updated_date")
-    private LocalDateTime updatedDate = LocalDateTime.now();
+    private Date updatedDate = new Date();
 
     @PrePersist
     public void onCreate() {
-        createdDate = LocalDateTime.now();
+        createdDate = new Date();
         updatedDate = this.createdDate;
     }
 
     @PreUpdate
     public void onUpdate() {
-        updatedDate = LocalDateTime.now();
+        updatedDate = new Date();
     }
 }
