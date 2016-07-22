@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
  */
 @SpringBootApplication
 @Import(PersistenceConfiguration.class)
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+//@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 public class ChordsApplication {
 
     public static void main(String[] args) throws Exception {

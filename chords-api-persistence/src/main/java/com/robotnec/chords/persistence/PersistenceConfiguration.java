@@ -1,5 +1,6 @@
 package com.robotnec.chords.persistence;
 
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
@@ -36,6 +37,7 @@ public class PersistenceConfiguration {
                 .username(username)
                 .url(dataSourceUrl)
                 .driverClassName(driverClassName)
+                .type(MysqlDataSource.class)
                 .build();
     }
 
