@@ -1,16 +1,19 @@
 package com.robotnec.chords;
 
-import com.robotnec.chords.config.SwaggerConfig;
+import com.robotnec.chords.config.SecurityConfiguration;
+import com.robotnec.chords.config.SwaggerConfiguration;
 import com.robotnec.chords.persistence.PersistenceConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * @author Kyrylo Zapylaiev zapylaev@gmail.com
  */
 @SpringBootApplication
-@Import({PersistenceConfiguration.class, SwaggerConfig.class})
+@EnableSwagger2
+@Import({PersistenceConfiguration.class, SecurityConfiguration.class, SwaggerConfiguration.class})
 public class ChordsApplication {
 
     public static void main(String[] args) throws Exception {
