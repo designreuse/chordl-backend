@@ -11,6 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @ToString
 @NoArgsConstructor
+@Data
 public class Song extends BaseEntity {
 
     @Id

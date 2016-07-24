@@ -32,4 +32,6 @@
         <appender-ref ref="CONSOLE"/>
     </root>
 
+    <logger name="ma.glasnost.orika" level="DEBUG" />
+
 </configuration>

@@ -1,9 +1,11 @@
 package com.robotnec.chords.web;
 
+import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Song;
 import com.robotnec.chords.persistence.repository.SongRepository;
+import com.robotnec.chords.web.dto.SongDto;
+import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,16 +17,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class SongsController {
 
     @Autowired
-    SongRepository songRepository;
+    private SongRepository songRepository;
+
+    @Autowired
+    private Mapper mapper;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Iterable<Song>> getSongs() {
-        return new ResponseEntity<>(songRepository.findAll(), HttpStatus.OK);
+        return ResponseEntity.ok(songRepository.findAll());
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Song> getSongs(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(songRepository.findOne(id), HttpStatus.OK);
+    public ResponseEntity<SongDto> getSong(@PathVariable("id") Long id) {
+        Song song = songRepository.findOne(id);
+        if (song != null) {
+            return ResponseEntity.ok(mapper.map(song, SongDto.class));
+        }
+        throw new WrongArgumentException(String.format("Song with id '%s' not found", id));
     }
 
 }
