@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping(value = "/songs", produces = "application/json;charset=UTF-8")
 public class SongsController {
@@ -28,12 +30,11 @@ public class SongsController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<SongDto> getSong(@PathVariable("id") Long id) {
-        Song song = songRepository.findOne(id);
-        if (song != null) {
-            return ResponseEntity.ok(mapper.map(song, SongDto.class));
-        }
-        throw new WrongArgumentException(String.format("Song with id '%s' not found", id));
+    public ResponseEntity<SongDto> getSong(@PathVariable("id") final Long id) {
+        return Optional.of(id)
+                .flatMap(v -> Optional.ofNullable(songRepository.findOne(v)))
+                .map(v -> mapper.map(v, SongDto.class))
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", id)));
     }
-
 }
