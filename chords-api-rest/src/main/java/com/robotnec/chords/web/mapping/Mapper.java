@@ -23,10 +23,19 @@ public class Mapper {
         mapperFactory.classMap(Song.class, SongDto.class)
                 .byDefault()
                 .register();
+        mapperFactory.classMap(Song.class, Song.class)
+                .exclude("id")
+                .mapNulls(false)
+                .byDefault()
+                .register();
         mapperFacade = mapperFactory.getMapperFacade();
     }
 
     public <T> T map(Object source, Class<T> destination) {
         return mapperFacade.map(source, destination);
+    }
+
+    public void map(Object source, Object destination) {
+        mapperFacade.map(source, destination);
     }
 }

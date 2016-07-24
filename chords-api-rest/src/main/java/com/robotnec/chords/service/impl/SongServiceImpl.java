@@ -4,6 +4,7 @@ import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Song;
 import com.robotnec.chords.persistence.repository.SongRepository;
 import com.robotnec.chords.service.SongService;
+import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,9 @@ public class SongServiceImpl implements SongService {
     @Autowired
     private SongRepository songRepository;
 
+    @Autowired
+    private Mapper mapper;
+
     @Override
     public Optional<Song> getSong(long id) {
         return Optional.ofNullable(songRepository.findOne(id));
@@ -32,7 +36,11 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public Song updateSong(Song song) {
-        return songRepository.save(song);
+        Song song1 = songRepository.findOne(song.getId());
+
+        mapper.map(song, song1);
+
+        return songRepository.save(song1);
     }
 
     @Override

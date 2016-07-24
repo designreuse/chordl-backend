@@ -1,19 +1,15 @@
 package com.robotnec.chords.persistence.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import java.util.Date;
 
-@EqualsAndHashCode
-@Getter
-@Setter
-@ToString
+@Data
 @MappedSuperclass
 public abstract class BaseEntity {
 

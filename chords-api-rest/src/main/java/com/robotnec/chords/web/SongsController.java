@@ -46,4 +46,21 @@ public class SongsController {
                 .map(ResponseEntity::ok)
                 .orElseThrow(IllegalStateException::new);
     }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<SongDto> updateSong(@PathVariable("id") final Long id,
+                                              @RequestBody final SongDto songDto) {
+        return Optional.of(songDto)
+                .map(v -> mapper.map(v, Song.class))
+                .map(v -> setId(v, id))
+                .map(songService::updateSong)
+                .map(v -> mapper.map(v, SongDto.class))
+                .map(ResponseEntity::ok)
+                .orElseThrow(IllegalStateException::new);
+    }
+
+    private Song setId(Song song, Long id) {
+        song.setId(id);
+        return song;
+    }
 }

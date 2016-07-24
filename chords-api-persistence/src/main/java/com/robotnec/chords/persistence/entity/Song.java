@@ -1,17 +1,14 @@
 package com.robotnec.chords.persistence.entity;
 
-import lombok.*;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 
 @EqualsAndHashCode(callSuper = true)
+@Data
 @Entity
 @Table(name = "song")
-@AllArgsConstructor
-@ToString
-@NoArgsConstructor
-@Data
 public class Song extends BaseEntity {
 
     @Id
