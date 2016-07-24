@@ -59,6 +59,16 @@ public class SongsController {
                 .orElseThrow(IllegalStateException::new);
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<SongDto> deleteSong(@PathVariable("id") final Long id) {
+        return Optional.of(id)
+                .map(songService::deleteSong)
+                .map(v -> mapper.map(v, SongDto.class))
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", id)));
+
+    }
+
     private Song setId(Song song, Long id) {
         song.setId(id);
         return song;

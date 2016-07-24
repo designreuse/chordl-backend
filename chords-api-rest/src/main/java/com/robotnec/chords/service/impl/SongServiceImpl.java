@@ -36,21 +36,17 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public Song updateSong(Song song) {
-        Song song1 = songRepository.findOne(song.getId());
-
-        mapper.map(song, song1);
-
-        return songRepository.save(song1);
+        return getSong(song.getId())
+                .map(v -> mapSong(song, v))
+                .map(v -> songRepository.save(v))
+                .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", song.getId())));
     }
 
     @Override
     public Song deleteSong(long id) {
-        Song song = getSong(id)
+        return getSong(id)
+                .map(this::deleteSong)
                 .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", id)));
-
-        songRepository.delete(id);
-
-        return song;
     }
 
     @Override
@@ -58,5 +54,15 @@ public class SongServiceImpl implements SongService {
         List<Song> songs = new ArrayList<>();
         songRepository.findAll().forEach(songs::add);
         return songs;
+    }
+
+    private Song mapSong(Song source, Song destination) {
+        mapper.map(source, destination);
+        return destination;
+    }
+
+    private Song deleteSong(Song song) {
+        songRepository.delete(song.getId());
+        return song;
     }
 }
