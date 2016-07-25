@@ -23,7 +23,7 @@ public class SongsController {
     private Mapper mapper;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Song>> getSongs() {
+    public ResponseEntity<List<SongDto>> getSongs() {
         return ResponseEntity.ok(songService.getSongs());
     }
 
@@ -35,7 +35,6 @@ public class SongsController {
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", id)));
     }
-
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<SongDto> createSong(@RequestBody SongDto songDto) {
@@ -66,7 +65,6 @@ public class SongsController {
                 .map(v -> mapper.map(v, SongDto.class))
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", id)));
-
     }
 
     private Song setId(Song song, Long id) {

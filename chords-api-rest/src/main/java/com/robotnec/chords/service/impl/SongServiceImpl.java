@@ -1,9 +1,12 @@
 package com.robotnec.chords.service.impl;
 
 import com.robotnec.chords.exception.WrongArgumentException;
+import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.persistence.entity.Song;
+import com.robotnec.chords.persistence.repository.PerformerRepository;
 import com.robotnec.chords.persistence.repository.SongRepository;
 import com.robotnec.chords.service.SongService;
+import com.robotnec.chords.web.dto.SongDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,9 @@ public class SongServiceImpl implements SongService {
     private SongRepository songRepository;
 
     @Autowired
+    private PerformerRepository performerRepository;
+
+    @Autowired
     private Mapper mapper;
 
     @Override
@@ -31,15 +37,18 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public Song createSong(Song song) {
-        return songRepository.save(song);
+        Performer performer = song.getPerformer();
+
+        if (performer != null && performerRepository.exists(performer.getId())) {
+            return songRepository.save(song);
+        } else {
+            throw new WrongArgumentException(String.format("Performer '%s' not found", performer));
+        }
     }
 
     @Override
     public Song updateSong(Song song) {
-        return getSong(song.getId())
-                .map(v -> mapSong(song, v))
-                .map(v -> songRepository.save(v))
-                .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", song.getId())));
+        return createSong(song);
     }
 
     @Override
@@ -50,9 +59,9 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public List<Song> getSongs() {
-        List<Song> songs = new ArrayList<>();
-        songRepository.findAll().forEach(songs::add);
+    public List<SongDto> getSongs() {
+        List<SongDto> songs = new ArrayList<>();
+        songRepository.findAll().forEach(song -> songs.add(mapper.map(song, SongDto.class)));
         return songs;
     }
 

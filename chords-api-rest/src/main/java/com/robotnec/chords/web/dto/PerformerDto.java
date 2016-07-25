@@ -13,16 +13,12 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @ToString
-public class SongDto {
+public class PerformerDto {
     private long id;
 
-    private String title;
-
-    private String lyrics;
+    private String name;
 
     private Date createdDate;
 
     private Date updatedDate;
-
-    private PerformerDto performer;
 }

@@ -17,7 +17,7 @@ public abstract class BaseEntity {
     @Column(name = "created_date")
     private Date createdDate = new Date();
 
-    @DateTimeFormat(style = "M-")
+    @DateTimeFormat(style = "M-") // TODO @CreatedDate
     @Column(name = "updated_date")
     private Date updatedDate = new Date();
 

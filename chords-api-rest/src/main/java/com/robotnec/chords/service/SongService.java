@@ -1,6 +1,7 @@
 package com.robotnec.chords.service;
 
 import com.robotnec.chords.persistence.entity.Song;
+import com.robotnec.chords.web.dto.SongDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +18,5 @@ public interface SongService {
 
     Song deleteSong(long id);
 
-    List<Song> getSongs();
+    List<SongDto> getSongs();
 }

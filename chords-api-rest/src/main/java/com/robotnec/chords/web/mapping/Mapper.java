@@ -1,6 +1,8 @@
 package com.robotnec.chords.web.mapping;
 
+import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.persistence.entity.Song;
+import com.robotnec.chords.web.dto.PerformerDto;
 import com.robotnec.chords.web.dto.SongDto;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
@@ -26,6 +28,9 @@ public class Mapper {
         mapperFactory.classMap(Song.class, Song.class)
                 .exclude("id")
                 .mapNulls(false)
+                .byDefault()
+                .register();
+        mapperFactory.classMap(Performer.class, PerformerDto.class)
                 .byDefault()
                 .register();
         mapperFacade = mapperFactory.getMapperFacade();
