@@ -26,8 +26,7 @@ public class PerformersController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<PerformerDto>> getPerformers() {
-        List<PerformerDto> performerDtos = mapper.mapAsList(performerService.getPerformers(), PerformerDto.class);
-        return ResponseEntity.ok(performerDtos);
+        return ResponseEntity.ok(mapper.mapAsList(performerService.getPerformers(), PerformerDto.class));
     }
 
     @RequestMapping(method = RequestMethod.POST)

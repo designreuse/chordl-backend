@@ -18,5 +18,5 @@ public interface SongService {
 
     Song deleteSong(long id);
 
-    List<SongDto> getSongs();
+    List<Song> getSongs();
 }

@@ -24,7 +24,7 @@ public class SongsController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<SongDto>> getSongs() {
-        return ResponseEntity.ok(songService.getSongs());
+        return ResponseEntity.ok(mapper.mapAsList(songService.getSongs(), SongDto.class));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

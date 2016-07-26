@@ -6,7 +6,6 @@ import com.robotnec.chords.persistence.entity.Song;
 import com.robotnec.chords.persistence.repository.PerformerRepository;
 import com.robotnec.chords.persistence.repository.SongRepository;
 import com.robotnec.chords.service.SongService;
-import com.robotnec.chords.web.dto.SongDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,15 +58,10 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public List<SongDto> getSongs() {
-        List<SongDto> songs = new ArrayList<>();
-        songRepository.findAll().forEach(song -> songs.add(mapper.map(song, SongDto.class)));
+    public List<Song> getSongs() {
+        List<Song> songs = new ArrayList<>();
+        songRepository.findAll().forEach(songs::add);
         return songs;
-    }
-
-    private Song mapSong(Song source, Song destination) {
-        mapper.map(source, destination);
-        return destination;
     }
 
     private Song deleteSong(Song song) {
