@@ -21,6 +21,6 @@ public class Performer extends BaseEntity {
 
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "performer")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "performer")
     private List<Song> songs;
 }

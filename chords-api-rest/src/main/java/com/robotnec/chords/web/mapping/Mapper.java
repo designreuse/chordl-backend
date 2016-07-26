@@ -10,6 +10,7 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * @author zak <zak@robotnec.com>
@@ -23,6 +24,7 @@ public class Mapper {
     private void postConstruct() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         mapperFactory.classMap(Song.class, SongDto.class)
+                .field("performer.id", "performerId")
                 .byDefault()
                 .register();
         mapperFactory.classMap(Song.class, Song.class)
@@ -42,5 +44,9 @@ public class Mapper {
 
     public void map(Object source, Object destination) {
         mapperFacade.map(source, destination);
+    }
+
+    public <S, D> List<D> mapAsList(Iterable<S> iterable, Class<D> destination) {
+        return mapperFacade.mapAsList(iterable, destination);
     }
 }

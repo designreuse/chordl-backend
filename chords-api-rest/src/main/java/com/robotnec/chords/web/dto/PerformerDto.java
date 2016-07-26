@@ -1,8 +1,10 @@
 package com.robotnec.chords.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author zak <zak@robotnec.com>
@@ -21,4 +23,6 @@ public class PerformerDto {
     private Date createdDate;
 
     private Date updatedDate;
+
+    private List<SongDto> songs;
 }

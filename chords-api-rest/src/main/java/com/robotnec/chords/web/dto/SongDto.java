@@ -24,5 +24,5 @@ public class SongDto {
 
     private Date updatedDate;
 
-    private PerformerDto performer;
+    private long performerId;
 }

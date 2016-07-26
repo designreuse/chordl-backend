@@ -22,6 +22,7 @@ public class Song extends BaseEntity {
 
     private String lyrics;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "performer_id")
     private Performer performer;
 }

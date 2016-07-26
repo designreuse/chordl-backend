@@ -1,10 +1,8 @@
 package com.robotnec.chords.web;
 
 import com.robotnec.chords.persistence.entity.Performer;
-import com.robotnec.chords.persistence.entity.Song;
 import com.robotnec.chords.service.PerformerService;
 import com.robotnec.chords.web.dto.PerformerDto;
-import com.robotnec.chords.web.dto.SongDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +25,9 @@ public class PerformersController {
     private Mapper mapper;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Performer>> getPerformers() {
-        return ResponseEntity.ok(performerService.getPerformers());
+    public ResponseEntity<List<PerformerDto>> getPerformers() {
+        List<PerformerDto> performerDtos = mapper.mapAsList(performerService.getPerformers(), PerformerDto.class);
+        return ResponseEntity.ok(performerDtos);
     }
 
     @RequestMapping(method = RequestMethod.POST)
