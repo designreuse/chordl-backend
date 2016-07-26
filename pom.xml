@@ -37,7 +37,7 @@
         <java.version>1.8</java.version>
         <mvn-compiler.version>3.3</mvn-compiler.version>
         <junit.version>4.11</junit.version>
-        <lombok.version>1.16.4</lombok.version>
+        <lombok.version>1.16.10</lombok.version>
         <swagger.version>2.0.3</swagger.version>
         <jackson.version>2.5.4</jackson.version>
         <orika-core.version>1.4.5</orika-core.version>
