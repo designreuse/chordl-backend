@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author zak <zak@robotnec.com>
@@ -21,6 +22,11 @@ public class PerformerServiceImpl implements PerformerService {
 
     @Autowired
     private Mapper mapper;
+
+    @Override
+    public Optional<Performer> getPerformer(long id) {
+        return Optional.ofNullable(performerRepository.findOne(id));
+    }
 
     @Override
     public List<Performer> getPerformers() {
