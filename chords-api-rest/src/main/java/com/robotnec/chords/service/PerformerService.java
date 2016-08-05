@@ -11,7 +11,11 @@ import java.util.Optional;
 public interface PerformerService {
     Optional<Performer> getPerformer(long id);
 
-    List<Performer> getPerformers();
-
     Performer createPerformer(Performer performer);
+
+    Performer updatePerformer(Performer performer);
+
+    Performer deletePerformer(long id);
+
+    List<Performer> getPerformers();
 }

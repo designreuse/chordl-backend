@@ -4,6 +4,7 @@ import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.service.PerformerService;
 import com.robotnec.chords.web.dto.PerformerDto;
+import com.robotnec.chords.web.dto.SongDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -44,5 +45,31 @@ public class PerformersController {
                 .map(v -> mapper.map(v, PerformerDto.class))
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new WrongArgumentException(String.format("Performer with id '%s' not found", id)));
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<PerformerDto> updatePerformer(@PathVariable("id") final Long id,
+                                              @RequestBody final PerformerDto songDto) {
+        return Optional.of(songDto)
+                .map(v -> mapper.map(v, Performer.class))
+                .map(v -> setId(v, id))
+                .map(performerService::updatePerformer)
+                .map(v -> mapper.map(v, PerformerDto.class))
+                .map(ResponseEntity::ok)
+                .orElseThrow(IllegalStateException::new);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<SongDto> deleteSong(@PathVariable("id") final Long id) {
+        return Optional.of(id)
+                .map(performerService::deletePerformer)
+                .map(v -> mapper.map(v, SongDto.class))
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", id)));
+    }
+
+    private Performer setId(Performer performer, Long id) {
+        performer.setId(id);
+        return performer;
     }
 }

@@ -1,5 +1,6 @@
 package com.robotnec.chords.service.impl;
 
+import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.persistence.repository.PerformerRepository;
 import com.robotnec.chords.service.PerformerService;
@@ -38,5 +39,22 @@ public class PerformerServiceImpl implements PerformerService {
     @Override
     public Performer createPerformer(Performer performer) {
         return performerRepository.save(performer);
+    }
+
+    @Override
+    public Performer updatePerformer(Performer performer) {
+        return createPerformer(performer);
+    }
+
+    @Override
+    public Performer deletePerformer(long id) {
+        return getPerformer(id)
+                .map(this::deletePerformer)
+                .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", id)));
+    }
+
+    private Performer deletePerformer(Performer performer) {
+        performerRepository.delete(performer.getId());
+        return performer;
     }
 }

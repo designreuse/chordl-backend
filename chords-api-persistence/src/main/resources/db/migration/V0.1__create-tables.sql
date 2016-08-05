@@ -20,7 +20,7 @@ CREATE TABLE `song` (
   `created_date`          DATETIME DEFAULT NULL,
   `updated_date`          DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`performer_id`) REFERENCES `performer` (`id`)
+  FOREIGN KEY (`performer_id`) REFERENCES `performer` (`id`) ON DELETE CASCADE
 )
   ENGINE = InnoDb
   DEFAULT CHARSET = utf8;
