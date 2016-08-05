@@ -3,8 +3,8 @@ package com.robotnec.chords.web;
 import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.service.PerformerService;
+import com.robotnec.chords.service.SongService;
 import com.robotnec.chords.web.dto.PerformerDto;
-import com.robotnec.chords.web.dto.SongDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +19,9 @@ public class PerformersController {
 
     @Autowired
     private PerformerService performerService;
+
+    @Autowired
+    private SongService songService;
 
     @Autowired
     private Mapper mapper;
@@ -60,12 +63,12 @@ public class PerformersController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<SongDto> deleteSong(@PathVariable("id") final Long id) {
+    public ResponseEntity<PerformerDto> deletePerformer(@PathVariable("id") final Long id) {
         return Optional.of(id)
                 .map(performerService::deletePerformer)
-                .map(v -> mapper.map(v, SongDto.class))
+                .map(v -> mapper.map(v, PerformerDto.class))
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", id)));
+                .orElseThrow(() -> new WrongArgumentException(String.format("Performer with id '%s' not found", id)));
     }
 
     private Performer setId(Performer performer, Long id) {
