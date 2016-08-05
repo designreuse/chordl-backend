@@ -21,9 +21,6 @@ public class PerformersController {
     private PerformerService performerService;
 
     @Autowired
-    private SongService songService;
-
-    @Autowired
     private Mapper mapper;
 
     @RequestMapping(method = RequestMethod.GET)
@@ -52,7 +49,7 @@ public class PerformersController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<PerformerDto> updatePerformer(@PathVariable("id") final Long id,
-                                              @RequestBody final PerformerDto songDto) {
+                                                        @RequestBody final PerformerDto songDto) {
         return Optional.of(songDto)
                 .map(v -> mapper.map(v, Performer.class))
                 .map(v -> setId(v, id))
