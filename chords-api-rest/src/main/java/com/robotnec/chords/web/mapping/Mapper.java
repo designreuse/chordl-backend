@@ -25,6 +25,7 @@ public class Mapper {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         mapperFactory.classMap(Song.class, SongDto.class)
                 .field("performer.id", "performerId")
+                .field("performer.name", "performerName")
                 .byDefault()
                 .register();
         mapperFactory.classMap(Song.class, Song.class)

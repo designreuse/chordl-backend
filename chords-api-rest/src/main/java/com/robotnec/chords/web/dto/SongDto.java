@@ -25,4 +25,6 @@ public class SongDto {
     private Date updatedDate;
 
     private long performerId;
+
+    private String performerName;
 }
