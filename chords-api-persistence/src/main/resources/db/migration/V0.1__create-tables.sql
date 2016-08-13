@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS `performer`;
 
 CREATE TABLE `performer` (
   `id`                    INT NOT NULL AUTO_INCREMENT,
-  `name`                  VARCHAR(255) UNIQUE,
+  `name`                  VARCHAR(255) NOT NULL UNIQUE,
   `created_date`          DATETIME DEFAULT NULL,
   `updated_date`          DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -14,8 +14,8 @@ CREATE TABLE `performer` (
 
 CREATE TABLE `song` (
   `id`                    INT NOT NULL AUTO_INCREMENT,
-  `title`                 VARCHAR(255),
-  `lyrics`                TEXT,
+  `title`                 VARCHAR(255) NOT NULL,
+  `lyrics`                TEXT NOT NULL,
   `performer_id`          INT NOT NULL,
   `created_date`          DATETIME DEFAULT NULL,
   `updated_date`          DATETIME DEFAULT NULL,

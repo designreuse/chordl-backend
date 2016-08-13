@@ -30,6 +30,12 @@ public class PerformersController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<PerformerDto> createPerformer(@RequestBody PerformerDto performerDto) {
+
+        // TODO use validation annotations
+        if (performerDto.getName() == null || performerDto.getName().isEmpty()) {
+            throw new IllegalArgumentException("Performer name is empty");
+        }
+
         return Optional.of(performerDto)
                 .map(v -> mapper.map(v, Performer.class))
                 .map(performerService::createPerformer)
