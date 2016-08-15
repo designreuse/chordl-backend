@@ -41,7 +41,6 @@
         <swagger.version>2.0.3</swagger.version>
         <jackson.version>2.5.4</jackson.version>
         <orika-core.version>1.4.5</orika-core.version>
-        <spring-cloud-aws.version>1.0.4.RELEASE</spring-cloud-aws.version>
         <flyway.clean>true</flyway.clean>
     </properties>
 
@@ -87,17 +86,6 @@
                 <groupId>ma.glasnost.orika</groupId>
                 <artifactId>orika-core</artifactId>
                 <version>${orika-core.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-aws-context</artifactId>
-                <version>${spring-cloud-aws.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-aws-jdbc</artifactId>
-                <version>${spring-cloud-aws.version}</version>
             </dependency>
 
             <!-- Test -->

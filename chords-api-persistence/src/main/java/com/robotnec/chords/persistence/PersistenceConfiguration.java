@@ -29,18 +29,17 @@ public class PersistenceConfiguration {
     @Value("${flyway.db.clean:false}")
     private boolean flywayClean;
 
-    // TODO move to dev
-//    @Bean
-//    public DataSource dataSource() {
-//        return DataSourceBuilder
-//                .create()
-//                .password(password)
-//                .username(username)
-//                .url(dataSourceUrl)
-//                .driverClassName(driverClassName)
-//                .type(MysqlDataSource.class)
-//                .build();
-//    }
+    @Bean
+    public DataSource dataSource() {
+        return DataSourceBuilder
+                .create()
+                .password(password)
+                .username(username)
+                .url(dataSourceUrl)
+                .driverClassName(driverClassName)
+                .type(MysqlDataSource.class)
+                .build();
+    }
 
     @Bean
     public FlywayMigrationStrategy flywayMigrationStrategy() {
