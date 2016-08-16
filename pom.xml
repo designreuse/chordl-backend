@@ -30,6 +30,14 @@
             <name>Spring Milestones</name>
             <url>http://maven.springframework.org/milestone/</url>
         </repository>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/libs-snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <properties>
@@ -41,6 +49,7 @@
         <swagger.version>2.0.3</swagger.version>
         <jackson.version>2.5.4</jackson.version>
         <orika-core.version>1.4.5</orika-core.version>
+        <!--<data-solr.version>2.1.0.BUILD-SNAPSHOT</data-solr.version>-->
         <flyway.clean>true</flyway.clean>
     </properties>
 
@@ -87,6 +96,11 @@
                 <artifactId>orika-core</artifactId>
                 <version>${orika-core.version}</version>
             </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.springframework.data</groupId>-->
+                <!--<artifactId>spring-data-solr</artifactId>-->
+                <!--<version>${data-solr.version}</version>-->
+            <!--</dependency>-->
 
             <!-- Test -->
         </dependencies>
@@ -109,4 +123,5 @@
             </resource>
         </resources>
     </build>
+
 </project>

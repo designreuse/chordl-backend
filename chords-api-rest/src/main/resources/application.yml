@@ -15,9 +15,34 @@ spring:
     serialization:
       write_dates_as_timestamps: false
       write_bigdecimal_as_plain: true
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/chords
+    username: chords_api
+    password: chords_api
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        show_sql: true
+        format_sql: true
+        cache:
+          use_second_level_cache: false
+          use_structured_entities: true
+        generate_statistics: false
+  data:
+    solr:
+      host: http://localhost:8983/solr/chords-collection
+
+flyway:
+  db:
+    clean: ${flyway.clean:false}
 
 endpoints.enabled: false
 
 endpoints:
-    info.enabled: true
-    health.enabled: true
+  info.enabled: true
+  health.enabled: true
+
+
+

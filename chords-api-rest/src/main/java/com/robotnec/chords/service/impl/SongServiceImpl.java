@@ -5,6 +5,7 @@ import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.persistence.entity.Song;
 import com.robotnec.chords.persistence.repository.PerformerRepository;
 import com.robotnec.chords.persistence.repository.SongRepository;
+import com.robotnec.chords.persistence.repository.SongSolrRepository;
 import com.robotnec.chords.service.SongService;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class SongServiceImpl implements SongService {
 
     @Autowired
     private SongRepository songRepository;
+
+    @Autowired
+    private SongSolrRepository songSolrRepository;
 
     @Autowired
     private PerformerRepository performerRepository;
