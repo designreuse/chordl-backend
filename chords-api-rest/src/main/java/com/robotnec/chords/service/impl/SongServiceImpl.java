@@ -3,6 +3,7 @@ package com.robotnec.chords.service.impl;
 import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.persistence.entity.Song;
+import com.robotnec.chords.persistence.entity.SongSolrDocument;
 import com.robotnec.chords.persistence.repository.PerformerRepository;
 import com.robotnec.chords.persistence.repository.SongRepository;
 import com.robotnec.chords.persistence.repository.SongSolrRepository;
@@ -43,7 +44,17 @@ public class SongServiceImpl implements SongService {
         Performer performer = song.getPerformer();
 
         if (performer != null && performerRepository.exists(performer.getId())) {
-            return songRepository.save(song);
+            Song savedSong = songRepository.save(song);
+
+            SongSolrDocument created = songSolrRepository.save(SongSolrDocument.builder()
+                    .id(savedSong.getId())
+                    .title(savedSong.getTitle())
+                    .lyrics(savedSong.getLyrics())
+                    .build());
+
+            System.out.println("create: " + songSolrRepository.count());
+
+            return savedSong;
         } else {
             throw new WrongArgumentException(String.format("Performer '%s' not found", performer));
         }

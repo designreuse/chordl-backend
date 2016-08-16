@@ -16,6 +16,6 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<SongSolrDocument> search(String term) {
-        return songSolrRepository.findByText(term);
+        return songSolrRepository.findByAllFields(term);
     }
 }
