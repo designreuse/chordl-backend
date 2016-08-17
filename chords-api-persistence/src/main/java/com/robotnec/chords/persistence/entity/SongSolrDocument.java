@@ -10,7 +10,7 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 @Data
 @Builder
 @ToString
-@SolrDocument()
+@SolrDocument
 public class SongSolrDocument {
 
     @Id
@@ -21,4 +21,7 @@ public class SongSolrDocument {
 
     @Field
     private String lyrics;
+
+    @Field
+    private String performer;
 }
