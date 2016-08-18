@@ -13,6 +13,10 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 @SolrDocument
 public class SongSolrDocument {
 
+    public enum FieldName {
+        TITLE, LYRICS, PERFORMER;
+    }
+
     @Id
     private long id;
 

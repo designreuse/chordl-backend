@@ -1,7 +1,7 @@
 package com.robotnec.chords.web;
 
-import com.robotnec.chords.persistence.entity.SongSolrDocument;
 import com.robotnec.chords.service.SearchService;
+import com.robotnec.chords.web.dto.SearchItemDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +26,8 @@ public class SearchController {
     Mapper mapper;
 
     @RequestMapping(value = "/{query}",method = RequestMethod.GET)
-    public ResponseEntity<List<SongSolrDocument>> search(@PathVariable("query") final String query) {
-        List<SongSolrDocument> songs = searchService.search(query);
+    public ResponseEntity<List<SearchItemDto>> search(@PathVariable("query") final String query) {
+        List<SearchItemDto> songs = searchService.search(query);
         return ResponseEntity.ok(songs);
     }
 }

@@ -11,6 +11,7 @@ import com.robotnec.chords.service.SongService;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,28 +32,27 @@ public class SongServiceImpl implements SongService {
     @Autowired
     private PerformerRepository performerRepository;
 
-    @Autowired
-    private Mapper mapper;
-
     @Override
     public Optional<Song> getSong(long id) {
         return Optional.ofNullable(songRepository.findOne(id));
     }
 
+    @Transactional
     @Override
     public Song createSong(Song song) {
         Performer performer = song.getPerformer();
 
-        if (performer != null && performerRepository.exists(performer.getId())) {
+        performer = performerRepository.findOne(performer.getId());
+
+        if (performer != null) {
             Song savedSong = songRepository.save(song);
 
-            SongSolrDocument created = songSolrRepository.save(SongSolrDocument.builder()
+            songSolrRepository.save(SongSolrDocument.builder()
                     .id(savedSong.getId())
                     .title(savedSong.getTitle())
                     .lyrics(savedSong.getLyrics())
+                    .performer(performer.getName())
                     .build());
-
-            System.out.println("create: " + songSolrRepository.count());
 
             return savedSong;
         } else {
@@ -65,11 +65,16 @@ public class SongServiceImpl implements SongService {
         return createSong(song);
     }
 
+    @Transactional
     @Override
     public Song deleteSong(long id) {
-        return getSong(id)
+        Song deletedSong = getSong(id)
                 .map(this::deleteSong)
                 .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", id)));
+
+        songSolrRepository.delete(deletedSong.getId());
+
+        return deletedSong;
     }
 
     @Override

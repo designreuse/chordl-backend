@@ -1,6 +1,5 @@
 package com.robotnec.chords.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.Date;

@@ -1,15 +1,15 @@
 package com.robotnec.chords.persistence.repository;
 
 import com.robotnec.chords.persistence.entity.SongSolrDocument;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.solr.repository.Highlight;
 import org.springframework.data.solr.repository.Query;
 import org.springframework.data.solr.repository.SolrCrudRepository;
 
-import java.util.List;
-
 public interface SongSolrRepository extends SolrCrudRepository<SongSolrDocument, Long> {
 
-    @Highlight(prefix = "<b>", postfix = "</b>")
+    @Highlight(prefix = "<b>", postfix = "</b>", fields = {"title", "lyrics", "performer"})
     @Query(value = "catch_all:?0")
-    List<SongSolrDocument> findByAllFields(String term);
+    HighlightPage<SongSolrDocument> findByAllFields(String term, Pageable pageable);
 }
