@@ -4,6 +4,7 @@ import com.robotnec.chords.persistence.entity.SongSolrDocument;
 import com.robotnec.chords.persistence.repository.SongSolrRepository;
 import com.robotnec.chords.service.SearchService;
 import com.robotnec.chords.web.dto.SearchItemDto;
+import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,9 @@ public class SearchServiceImpl implements SearchService {
     @Autowired
     private SongSolrRepository songSolrRepository;
 
+    @Autowired
+    private Mapper mapper;
+
     @Override
     public List<SearchItemDto> search(String term) {
         List<SearchItemDto> results = new ArrayList<>();
@@ -29,12 +33,9 @@ public class SearchServiceImpl implements SearchService {
         List<HighlightEntry<SongSolrDocument>> highlightEntries = result.getHighlighted();
 
         highlightEntries.forEach(entry -> {
-            SearchItemDto searchItemDto = new SearchItemDto();
-            searchItemDto.setSongId(entry.getEntity().getId());
-            searchItemDto.setTitle(entry.getEntity().getTitle());
-            searchItemDto.setPerformer(entry.getEntity().getPerformer());
+            SearchItemDto searchItemDto = mapper.map(entry.getEntity(), SearchItemDto.class);
 
-            bindHighlightedFields(entry, searchItemDto);
+            mapHighlightedFields(entry, searchItemDto);
 
             results.add(searchItemDto);
         });
@@ -42,7 +43,7 @@ public class SearchServiceImpl implements SearchService {
         return results;
     }
 
-    private void bindHighlightedFields(HighlightEntry<SongSolrDocument> entry, SearchItemDto searchItemDto) {
+    private void mapHighlightedFields(HighlightEntry<SongSolrDocument> entry, SearchItemDto searchItemDto) {
         List<HighlightEntry.Highlight> highlights = entry.getHighlights();
         highlights.forEach(highlight -> {
             String highlightFieldName = highlight.getField().getName();

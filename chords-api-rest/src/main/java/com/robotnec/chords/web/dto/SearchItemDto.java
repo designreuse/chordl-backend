@@ -9,7 +9,8 @@ import lombok.*;
 @Builder
 @ToString
 public class SearchItemDto {
-    private long songId;
+    private Long songId;
+    private Long performerId;
     private String performer;
     private String title;
     private String snippet;

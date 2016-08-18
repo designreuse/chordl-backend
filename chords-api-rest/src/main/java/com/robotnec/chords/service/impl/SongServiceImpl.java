@@ -52,11 +52,12 @@ public class SongServiceImpl implements SongService {
                     .title(savedSong.getTitle())
                     .lyrics(savedSong.getLyrics())
                     .performer(performer.getName())
+                    .performerId(performer.getId())
                     .build());
 
             return savedSong;
         } else {
-            throw new WrongArgumentException(String.format("Performer '%s' not found", performer));
+            throw new WrongArgumentException(String.format("Performer '%s' not found", song.getPerformer()));
         }
     }
 

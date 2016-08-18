@@ -18,7 +18,7 @@ public class SongSolrDocument {
     }
 
     @Id
-    private long id;
+    private Long id;
 
     @Field
     private String title;
@@ -28,4 +28,7 @@ public class SongSolrDocument {
 
     @Field
     private String performer;
+
+    @Field
+    private Long performerId;
 }
