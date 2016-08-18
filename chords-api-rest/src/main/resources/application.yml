@@ -32,7 +32,7 @@ spring:
         generate_statistics: false
   data:
     solr:
-      host: http://localhost:8983/solr/chords-collection
+      host: http://localhost:8983/solr/chords-core
 
 flyway:
   db:
