@@ -4,13 +4,10 @@ import com.robotnec.chords.service.SearchService;
 import com.robotnec.chords.web.dto.SearchItemDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author zak <zak@robotnec.com>
@@ -25,9 +22,9 @@ public class SearchController {
     @Autowired
     Mapper mapper;
 
-    @RequestMapping(value = "/{query}",method = RequestMethod.GET)
-    public ResponseEntity<List<SearchItemDto>> search(@PathVariable("query") final String query) {
-        List<SearchItemDto> songs = searchService.search(query);
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<Page<SearchItemDto>> search(@RequestParam final String query, final Pageable pageable) {
+        Page<SearchItemDto> songs = searchService.search(query, pageable);
         return ResponseEntity.ok(songs);
     }
 }

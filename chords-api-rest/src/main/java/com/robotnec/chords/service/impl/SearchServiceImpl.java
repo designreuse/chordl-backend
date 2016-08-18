@@ -6,10 +6,11 @@ import com.robotnec.chords.service.SearchService;
 import com.robotnec.chords.web.dto.SearchItemDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.HighlightEntry;
-import org.springframework.data.solr.core.query.result.HighlightPage;
+import org.springframework.data.solr.core.query.result.SolrResultPage;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,11 +26,10 @@ public class SearchServiceImpl implements SearchService {
     private Mapper mapper;
 
     @Override
-    public List<SearchItemDto> search(String term) {
+    public Page<SearchItemDto> search(String term, Pageable pageable) {
         List<SearchItemDto> results = new ArrayList<>();
 
-        Pageable pageable = new PageRequest(0, 10);
-        HighlightPage<SongSolrDocument> result = songSolrRepository.findByAllFields(term, pageable);
+        SolrResultPage<SongSolrDocument> result = songSolrRepository.findByAllFields(term, pageable);
         List<HighlightEntry<SongSolrDocument>> highlightEntries = result.getHighlighted();
 
         highlightEntries.forEach(entry -> {
@@ -40,23 +40,28 @@ public class SearchServiceImpl implements SearchService {
             results.add(searchItemDto);
         });
 
-        return results;
+        return new PageImpl<>(results, pageable, result.getTotalElements());
     }
 
     private void mapHighlightedFields(HighlightEntry<SongSolrDocument> entry, SearchItemDto searchItemDto) {
         List<HighlightEntry.Highlight> highlights = entry.getHighlights();
         highlights.forEach(highlight -> {
             String highlightFieldName = highlight.getField().getName();
+            String snippet = highlight.getSnipplets().get(0);
 
-            if (highlightFieldName.equalsIgnoreCase(SongSolrDocument.FieldName.TITLE.name())) {
-                searchItemDto.setTitle(highlight.getSnipplets().get(0));
+            if (equalsField(highlightFieldName, SongSolrDocument.FieldName.TITLE)) {
+                searchItemDto.setTitle(snippet);
             }
-            if (highlightFieldName.equalsIgnoreCase(SongSolrDocument.FieldName.LYRICS.name())) {
-                searchItemDto.setSnippet(highlight.getSnipplets().get(0));
+            if (equalsField(highlightFieldName, SongSolrDocument.FieldName.LYRICS)) {
+                searchItemDto.setSnippet(snippet);
             }
-            if (highlightFieldName.equalsIgnoreCase(SongSolrDocument.FieldName.PERFORMER.name())) {
-                searchItemDto.setPerformer(highlight.getSnipplets().get(0));
+            if (equalsField(highlightFieldName, SongSolrDocument.FieldName.PERFORMER)) {
+                searchItemDto.setPerformer(snippet);
             }
         });
+    }
+
+    private boolean equalsField(String highlightFieldName, SongSolrDocument.FieldName fieldName) {
+        return highlightFieldName.equalsIgnoreCase(fieldName.name());
     }
 }
