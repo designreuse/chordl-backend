@@ -1,3 +1,1 @@
-SOLR_HOME=~/solr/ curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=chords-core&instanceDir=chords-solr-home&config=solrconfig.xml&schema=schema.xml&dataDir=data&loadOnStartup=true&transient=false'
-
 solr create -c chords-core -d <full_path>/chords-api-persistence/setup/solr/conf
