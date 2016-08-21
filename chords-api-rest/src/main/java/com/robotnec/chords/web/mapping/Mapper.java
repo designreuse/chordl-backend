@@ -9,6 +9,10 @@ import com.robotnec.chords.web.dto.SongDto;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -55,5 +59,11 @@ public class Mapper {
 
     public <S, D> List<D> mapAsList(Iterable<S> iterable, Class<D> destination) {
         return mapperFacade.mapAsList(iterable, destination);
+    }
+
+    public <S, T> Page<T> mapAsPage(final Page<S> source, final Class<T> target) {
+        List<T> content = mapAsList(source.getContent(), target);
+        Pageable pageable = new PageRequest(source.getNumber(), source.getSize(), source.getSort());
+        return new PageImpl<>(content, pageable, source.getTotalElements());
     }
 }

@@ -1,6 +1,8 @@
 package com.robotnec.chords.service;
 
 import com.robotnec.chords.persistence.entity.Performer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +18,8 @@ public interface PerformerService {
     Performer updatePerformer(Performer performer);
 
     Performer deletePerformer(long id);
+
+    Page<Performer> getPerformers(Pageable pageable);
 
     List<Performer> getPerformers();
 }

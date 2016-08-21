@@ -4,8 +4,9 @@ import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.persistence.repository.PerformerRepository;
 import com.robotnec.chords.service.PerformerService;
-import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,12 +22,14 @@ public class PerformerServiceImpl implements PerformerService {
     @Autowired
     private PerformerRepository performerRepository;
 
-    @Autowired
-    private Mapper mapper;
-
     @Override
     public Optional<Performer> getPerformer(long id) {
         return Optional.ofNullable(performerRepository.findOne(id));
+    }
+
+    @Override
+    public Page<Performer> getPerformers(Pageable pageable) {
+        return performerRepository.findAll(pageable);
     }
 
     @Override

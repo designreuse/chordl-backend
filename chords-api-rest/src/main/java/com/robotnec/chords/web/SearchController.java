@@ -23,7 +23,6 @@ public class SearchController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Page<SearchItemDto>> search(@RequestParam final String query, final Pageable pageable) {
-        Page<SearchItemDto> songs = searchService.search(query, pageable);
-        return ResponseEntity.ok(songs);
+        return ResponseEntity.ok(searchService.search(query, pageable));
     }
 }
