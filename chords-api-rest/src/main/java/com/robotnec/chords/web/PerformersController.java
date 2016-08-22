@@ -5,6 +5,7 @@ import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.service.PerformerService;
 import com.robotnec.chords.web.dto.PerformerDto;
+import com.robotnec.chords.web.dto.SongDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -64,6 +66,15 @@ public class PerformersController {
                 .map(v -> mapper.map(v, PerformerDto.class))
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResourceNotFoundException(name));
+    }
+
+    @RequestMapping(value = "/{id}/songs", method = RequestMethod.GET)
+    public ResponseEntity<List<SongDto>> getPerformerSongs(@PathVariable("id") final Long id) {
+        return Optional.of(id)
+                .flatMap(v -> performerService.getPerformer(v))
+                .map(v -> mapper.mapAsList(v.getSongs(), SongDto.class))
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
