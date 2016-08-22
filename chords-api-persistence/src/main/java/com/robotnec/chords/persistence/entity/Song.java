@@ -16,7 +16,7 @@ public class Song extends BaseEntity {
 
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
 
     private String title;
 

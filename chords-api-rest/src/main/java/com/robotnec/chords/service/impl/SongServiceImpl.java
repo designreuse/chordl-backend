@@ -8,7 +8,6 @@ import com.robotnec.chords.persistence.repository.PerformerRepository;
 import com.robotnec.chords.persistence.repository.SongRepository;
 import com.robotnec.chords.persistence.repository.SongSolrRepository;
 import com.robotnec.chords.service.SongService;
-import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * @author zak <zak@robotnec.com>
@@ -59,6 +60,36 @@ public class SongServiceImpl implements SongService {
         } else {
             throw new WrongArgumentException(String.format("Performer '%s' not found", song.getPerformer()));
         }
+    }
+
+    @Transactional
+    @Override
+    public List<Song> createSongs(List<Song> songs) {
+        Iterable<Song> createdSongs = songs
+                .stream()
+                .map(song -> {
+                    long performerId = song.getPerformer().getId();
+                    Optional.ofNullable(performerRepository.findOne(performerId))
+                            .map(performer -> {
+                                song.setPerformer(performer);
+                                return performer;
+                            })
+                            .orElseThrow(() -> new WrongArgumentException(String.format("Performer '%s' not found", performerId)));
+                    return song;
+                })
+                .collect(Collectors.collectingAndThen(Collectors.toList(), savedSongs -> songRepository.save(savedSongs)));
+
+        StreamSupport.stream(createdSongs.spliterator(), false)
+                .map(song -> SongSolrDocument.builder()
+                        .id(song.getId())
+                        .title(song.getTitle())
+                        .lyrics(song.getLyrics())
+                        .performer(song.getPerformer().getName())
+                        .performerId(song.getPerformer().getId())
+                        .build())
+                .collect(Collectors.collectingAndThen(Collectors.toList(), solrDocuments -> songSolrRepository.save(solrDocuments)));
+
+        return StreamSupport.stream(createdSongs.spliterator(), false).collect(Collectors.toList());
     }
 
     @Override

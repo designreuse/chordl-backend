@@ -22,6 +22,4 @@ public class PerformerDto {
     private Date createdDate;
 
     private Date updatedDate;
-
-    private List<SongDto> songs;
 }

@@ -17,7 +17,7 @@ public class Performer extends BaseEntity {
 
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
 
     private String name;
 

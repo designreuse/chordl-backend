@@ -28,6 +28,11 @@ public class PerformerServiceImpl implements PerformerService {
     }
 
     @Override
+    public Optional<Performer> getPerformerByName(String name) {
+        return Optional.ofNullable(performerRepository.findByName(name));
+    }
+
+    @Override
     public Page<Performer> getPerformers(Pageable pageable) {
         return performerRepository.findAll(pageable);
     }

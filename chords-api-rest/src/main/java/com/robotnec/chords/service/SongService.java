@@ -14,6 +14,8 @@ public interface SongService {
 
     Song createSong(Song song);
 
+    List<Song> createSongs(List<Song> songs);
+
     Song updateSong(Song song);
 
     Song deleteSong(long id);

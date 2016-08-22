@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface PerformerService {
     Optional<Performer> getPerformer(long id);
 
+    Optional<Performer> getPerformerByName(String name);
+
     Performer createPerformer(Performer performer);
 
     Performer updatePerformer(Performer performer);

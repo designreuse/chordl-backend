@@ -1,5 +1,6 @@
 package com.robotnec.chords.web;
 
+import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.service.PerformerService;
@@ -53,7 +54,16 @@ public class PerformersController {
                 .flatMap(v -> performerService.getPerformer(v))
                 .map(v -> mapper.map(v, PerformerDto.class))
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new WrongArgumentException(String.format("Performer with id '%s' not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException(id));
+    }
+
+    @RequestMapping(value = "/search/{name}", method = RequestMethod.GET)
+    public ResponseEntity<PerformerDto> getPerformerByName(@PathVariable("name") final String name) {
+        return Optional.of(name)
+                .flatMap(v -> performerService.getPerformerByName(v))
+                .map(v -> mapper.map(v, PerformerDto.class))
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException(name));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)

@@ -1,5 +1,6 @@
 package com.robotnec.chords.web;
 
+import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Song;
 import com.robotnec.chords.service.SongService;
@@ -33,7 +34,7 @@ public class SongsController {
                 .flatMap(v -> songService.getSong(v))
                 .map(v -> mapper.map(v, SongDto.class))
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -42,6 +43,16 @@ public class SongsController {
                 .map(v -> mapper.map(v, Song.class))
                 .map(songService::createSong)
                 .map(v -> mapper.map(v, SongDto.class))
+                .map(ResponseEntity::ok)
+                .orElseThrow(IllegalStateException::new);
+    }
+
+    @RequestMapping(value = "/batch", method = RequestMethod.POST)
+    public ResponseEntity<List<SongDto>> createSongs(@RequestBody List<SongDto> songDto) {
+        return Optional.of(songDto)
+                .map(v -> mapper.mapAsList(v, Song.class))
+                .map(songService::createSongs)
+                .map(v -> mapper.mapAsList(v, SongDto.class))
                 .map(ResponseEntity::ok)
                 .orElseThrow(IllegalStateException::new);
     }
