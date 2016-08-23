@@ -4,7 +4,7 @@ import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.persistence.entity.Song;
 import com.robotnec.chords.persistence.entity.SongSolrDocument;
 import com.robotnec.chords.web.dto.PerformerDto;
-import com.robotnec.chords.web.dto.SearchItemDto;
+import com.robotnec.chords.web.dto.SearchNodeDto;
 import com.robotnec.chords.web.dto.SongDto;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
@@ -42,7 +42,7 @@ public class Mapper {
         mapperFactory.classMap(Performer.class, PerformerDto.class)
                 .byDefault()
                 .register();
-        mapperFactory.classMap(SongSolrDocument.class, SearchItemDto.class)
+        mapperFactory.classMap(SongSolrDocument.class, SearchNodeDto.class)
                 .field("id", "songId")
                 .byDefault()
                 .register();

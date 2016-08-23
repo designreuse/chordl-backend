@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class SearchItemDto {
+public class SearchNodeDto {
     private Long songId;
     private Long performerId;
     private String performer;

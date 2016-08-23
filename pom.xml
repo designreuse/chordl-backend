@@ -96,11 +96,6 @@
                 <artifactId>orika-core</artifactId>
                 <version>${orika-core.version}</version>
             </dependency>
-            <!--<dependency>-->
-                <!--<groupId>org.springframework.data</groupId>-->
-                <!--<artifactId>spring-data-solr</artifactId>-->
-                <!--<version>${data-solr.version}</version>-->
-            <!--</dependency>-->
 
             <!-- Test -->
         </dependencies>

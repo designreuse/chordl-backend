@@ -3,7 +3,7 @@ package com.robotnec.chords.service.impl;
 import com.robotnec.chords.persistence.entity.SongSolrDocument;
 import com.robotnec.chords.persistence.repository.SongSolrRepository;
 import com.robotnec.chords.service.SearchService;
-import com.robotnec.chords.web.dto.SearchItemDto;
+import com.robotnec.chords.web.dto.SearchNodeDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,37 +26,37 @@ public class SearchServiceImpl implements SearchService {
     private Mapper mapper;
 
     @Override
-    public Page<SearchItemDto> search(String term, Pageable pageable) {
-        List<SearchItemDto> results = new ArrayList<>();
+    public Page<SearchNodeDto> search(String term, Pageable pageable) {
+        List<SearchNodeDto> results = new ArrayList<>();
 
         SolrResultPage<SongSolrDocument> result = songSolrRepository.findByAllFields(term, pageable);
         List<HighlightEntry<SongSolrDocument>> highlightEntries = result.getHighlighted();
 
         highlightEntries.forEach(entry -> {
-            SearchItemDto searchItemDto = mapper.map(entry.getEntity(), SearchItemDto.class);
+            SearchNodeDto searchNodeDto = mapper.map(entry.getEntity(), SearchNodeDto.class);
 
-            mapHighlightedFields(entry, searchItemDto);
+            mapHighlightedFields(entry, searchNodeDto);
 
-            results.add(searchItemDto);
+            results.add(searchNodeDto);
         });
 
         return new PageImpl<>(results, pageable, result.getTotalElements());
     }
 
-    private void mapHighlightedFields(HighlightEntry<SongSolrDocument> entry, SearchItemDto searchItemDto) {
+    private void mapHighlightedFields(HighlightEntry<SongSolrDocument> entry, SearchNodeDto searchNodeDto) {
         List<HighlightEntry.Highlight> highlights = entry.getHighlights();
         highlights.forEach(highlight -> {
             String highlightFieldName = highlight.getField().getName();
             String snippet = highlight.getSnipplets().get(0);
 
             if (equalsField(highlightFieldName, SongSolrDocument.FieldName.TITLE)) {
-                searchItemDto.setTitle(snippet);
+                searchNodeDto.setTitle(snippet);
             }
             if (equalsField(highlightFieldName, SongSolrDocument.FieldName.LYRICS)) {
-                searchItemDto.setSnippet(snippet);
+                searchNodeDto.setSnippet(snippet);
             }
             if (equalsField(highlightFieldName, SongSolrDocument.FieldName.PERFORMER)) {
-                searchItemDto.setPerformer(snippet);
+                searchNodeDto.setPerformer(snippet);
             }
         });
     }
