@@ -27,7 +27,7 @@ public class FeaturedController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<FeaturedDto> getFeatured() {
-        List<SongDto> featuredSongs = mapper.mapAsList(songService.getSongs().subList(0, 10), SongDto.class);
+        List<SongDto> featuredSongs = mapper.mapAsList(songService.getRecentlyUpdatedSongs(20), SongDto.class);
         return ResponseEntity.ok(new FeaturedDto(featuredSongs));
     }
 }

@@ -116,6 +116,11 @@ public class SongServiceImpl implements SongService {
         return songs;
     }
 
+    @Override
+    public List<Song> getRecentlyUpdatedSongs(int amount) {
+        return songRepository.findTop20ByOrderByUpdatedDateDesc();
+    }
+
     private Song deleteSong(Song song) {
         songRepository.delete(song.getId());
         return song;

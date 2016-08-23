@@ -21,4 +21,6 @@ public interface SongService {
     Song deleteSong(long id);
 
     List<Song> getSongs();
+
+    List<Song> getRecentlyUpdatedSongs(int amount);
 }
