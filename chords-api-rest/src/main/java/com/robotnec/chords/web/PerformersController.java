@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.apache.zookeeper.server.ZooKeeperServer.ok;
 
 @RestController
 @RequestMapping(value = "/performers", produces = "application/json;charset=UTF-8")
@@ -32,6 +35,14 @@ public class PerformersController {
                 .map(v -> mapper.mapAsPage(v, PerformerDto.class))
                 .map(ResponseEntity::ok)
                 .orElseThrow(IllegalStateException::new);
+    }
+
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    public ResponseEntity<List<String>> getAllPerformerNames() {
+        List<String> result = performerService.getPerformers().stream()
+                .map(Performer::getName)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
     @RequestMapping(method = RequestMethod.POST)
