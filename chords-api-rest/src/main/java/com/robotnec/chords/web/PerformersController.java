@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.apache.zookeeper.server.ZooKeeperServer.ok;
-
 @RestController
 @RequestMapping(value = "/performers", produces = "application/json;charset=UTF-8")
 public class PerformersController {

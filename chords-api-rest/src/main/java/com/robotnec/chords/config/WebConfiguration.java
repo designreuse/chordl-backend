@@ -13,7 +13,7 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
         super.addCorsMappings(registry);
         registry.addMapping("/**")
                 .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedMethods("*")
                 .maxAge(Integer.MAX_VALUE);
     }
 }
