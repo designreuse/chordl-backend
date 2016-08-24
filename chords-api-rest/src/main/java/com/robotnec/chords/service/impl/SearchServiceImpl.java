@@ -5,6 +5,7 @@ import com.robotnec.chords.persistence.repository.SongSolrRepository;
 import com.robotnec.chords.service.SearchService;
 import com.robotnec.chords.web.dto.SearchNodeDto;
 import com.robotnec.chords.web.mapping.Mapper;
+import org.apache.solr.client.solrj.util.ClientUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,6 +28,8 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public Page<SearchNodeDto> search(String term, Pageable pageable) {
+        term = ClientUtils.escapeQueryChars(term) + "~2";
+
         List<SearchNodeDto> results = new ArrayList<>();
 
         SolrResultPage<SongSolrDocument> result = songSolrRepository.findByAllFields(term, pageable);
