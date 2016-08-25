@@ -32,14 +32,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .antMatcher("/**").authorizeRequests()
-                .antMatchers("/", "/login**", "/webjars/**").permitAll().anyRequest().authenticated()
+                    .antMatchers(
+                            "/swagger**",
+                            "/login**",
+                            "/webjars/**",
+                            "/configuration/**",
+                            "/v2/api-docs"
+                    ).permitAll()
+                    .anyRequest().authenticated()
+//                .and()
+//                .exceptionHandling()
+//                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
                 .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
+                    .logout().logoutSuccessUrl("/").permitAll()
                 .and()
-                .logout().logoutSuccessUrl("/").permitAll()
-                .and()
-                .csrf().disable()
+                    .csrf().disable()
                 .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
     }
 
@@ -55,8 +62,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @ConfigurationProperties("facebook.client")
     OAuth2ProtectedResourceDetails facebook() {
         AuthorizationCodeResourceDetails details = new AuthorizationCodeResourceDetails();
-        details.setUseCurrentUri(false);
-        details.setPreEstablishedRedirectUri("http://localhost:8081/api/success");
+//        details.setUseCurrentUri(false);
+//        details.setPreEstablishedRedirectUri("http://localhost:8081/api/success");
         return details;
     }
 
