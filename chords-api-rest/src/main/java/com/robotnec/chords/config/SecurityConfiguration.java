@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticat
 import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @EnableOAuth2Client
+@EnableAuthorizationServer
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -34,15 +36,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .antMatcher("/**").authorizeRequests()
-                    .antMatchers(
-                            "/login**",
-                            "/webjars/**"
-                    ).permitAll()
-                    .anyRequest().authenticated()
+                .antMatcher("/**")
+                    .authorizeRequests()
+                        .antMatchers("/", "/login**", "/webjars/**").permitAll()
+                        .anyRequest().authenticated()
                 .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
+                    .exceptionHandling()
+                    .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
                 .and()
                     .logout().logoutSuccessUrl("/").permitAll()
                 .and()

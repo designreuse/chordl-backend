@@ -33,6 +33,15 @@ spring:
   data:
     solr:
       host: http://localhost:8983/solr/chords-core
+
+security:
+  oauth2:
+    client:
+      client-id: 1234
+      client-secret: secret1234
+      scope: read,write
+      auto-approve-scopes: '.*'
+
 facebook:
   client:
     clientId: 1086354088118124
