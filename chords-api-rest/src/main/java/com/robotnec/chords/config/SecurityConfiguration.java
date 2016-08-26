@@ -18,8 +18,11 @@ import org.springframework.security.oauth2.client.token.grant.code.Authorization
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.CompositeFilter;
 
 import javax.servlet.Filter;
+import java.util.ArrayList;
+import java.util.List;
 
 @EnableOAuth2Client
 @Configuration
@@ -33,16 +36,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .antMatcher("/**").authorizeRequests()
                     .antMatchers(
-                            "/swagger**",
                             "/login**",
-                            "/webjars/**",
-                            "/configuration/**",
-                            "/v2/api-docs"
+                            "/webjars/**"
                     ).permitAll()
                     .anyRequest().authenticated()
-//                .and()
-//                .exceptionHandling()
-//                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
                 .and()
                     .logout().logoutSuccessUrl("/").permitAll()
                 .and()
@@ -51,25 +51,46 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private Filter ssoFilter() {
+        CompositeFilter filter = new CompositeFilter();
+        List<Filter> filters = new ArrayList<>();
+
         OAuth2ClientAuthenticationProcessingFilter facebookFilter = new OAuth2ClientAuthenticationProcessingFilter("/login/facebook");
         OAuth2RestTemplate facebookTemplate = new OAuth2RestTemplate(facebook(), oauth2ClientContext);
         facebookFilter.setRestTemplate(facebookTemplate);
         facebookFilter.setTokenServices(new UserInfoTokenServices(facebookResource().getUserInfoUri(), facebook().getClientId()));
-        return facebookFilter;
+        filters.add(facebookFilter);
+
+        OAuth2ClientAuthenticationProcessingFilter githubFilter = new OAuth2ClientAuthenticationProcessingFilter("/login/github");
+        OAuth2RestTemplate githubTemplate = new OAuth2RestTemplate(github(), oauth2ClientContext);
+        githubFilter.setRestTemplate(githubTemplate);
+        githubFilter.setTokenServices(new UserInfoTokenServices(githubResource().getUserInfoUri(), github().getClientId()));
+        filters.add(githubFilter);
+
+        filter.setFilters(filters);
+        return filter;
     }
 
     @Bean
     @ConfigurationProperties("facebook.client")
     OAuth2ProtectedResourceDetails facebook() {
-        AuthorizationCodeResourceDetails details = new AuthorizationCodeResourceDetails();
-//        details.setUseCurrentUri(false);
-//        details.setPreEstablishedRedirectUri("http://localhost:8081/api/success");
-        return details;
+        return new AuthorizationCodeResourceDetails();
     }
 
     @Bean
     @ConfigurationProperties("facebook.resource")
     ResourceServerProperties facebookResource() {
+        return new ResourceServerProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties("github.client")
+    OAuth2ProtectedResourceDetails github() {
+        return new AuthorizationCodeResourceDetails();
+    }
+
+    @Bean
+    @ConfigurationProperties("github.resource")
+    ResourceServerProperties githubResource() {
         return new ResourceServerProperties();
     }
 

@@ -46,6 +46,16 @@ facebook:
   resource:
     userInfoUri: https://graph.facebook.com/me
 
+github:
+  client:
+    clientId: 2878b00b7982ce896214
+    clientSecret: 9fd73d23d6472dae0170ab71e4dc86cd8efbe444
+    accessTokenUri: https://github.com/login/oauth/access_token
+    userAuthorizationUri: https://github.com/login/oauth/authorize
+    clientAuthenticationScheme: form
+  resource:
+    userInfoUri: https://api.github.com/user
+
 flyway:
   db:
     clean: ${flyway.clean:false}
