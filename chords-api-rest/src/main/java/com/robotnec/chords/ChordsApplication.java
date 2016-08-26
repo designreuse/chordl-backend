@@ -1,6 +1,5 @@
 package com.robotnec.chords;
 
-import com.robotnec.chords.config.SecurityConfiguration;
 import com.robotnec.chords.config.SwaggerConfiguration;
 import com.robotnec.chords.config.WebConfiguration;
 import com.robotnec.chords.persistence.PersistenceConfiguration;
@@ -16,7 +15,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @Import({
         PersistenceConfiguration.class,
-        SecurityConfiguration.class,
         SwaggerConfiguration.class,
         WebConfiguration.class
 })
