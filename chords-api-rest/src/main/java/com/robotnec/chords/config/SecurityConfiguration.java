@@ -68,16 +68,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         List<Filter> filters = new ArrayList<>();
 
         OAuth2ClientAuthenticationProcessingFilter facebookFilter = new OAuth2ClientAuthenticationProcessingFilter("/login/facebook");
-        OAuth2RestTemplate facebookTemplate = new OAuth2RestTemplate(facebook(), oauth2ClientContext);
+        OAuth2RestTemplate facebookTemplate = new OAuth2RestTemplate(facebook().getClient(), oauth2ClientContext);
         facebookFilter.setRestTemplate(facebookTemplate);
-        facebookFilter.setTokenServices(new UserInfoTokenServices(facebookResource().getUserInfoUri(), facebook().getClientId()));
+        facebookFilter.setTokenServices(new UserInfoTokenServices(facebook().getResource().getUserInfoUri(), facebook().getClient().getClientId()));
         filters.add(facebookFilter);
 
-        OAuth2ClientAuthenticationProcessingFilter githubFilter = new OAuth2ClientAuthenticationProcessingFilter("/login/github");
-        OAuth2RestTemplate githubTemplate = new OAuth2RestTemplate(github(), oauth2ClientContext);
-        githubFilter.setRestTemplate(githubTemplate);
-        githubFilter.setTokenServices(new UserInfoTokenServices(githubResource().getUserInfoUri(), github().getClientId()));
-        filters.add(githubFilter);
+//        OAuth2ClientAuthenticationProcessingFilter githubFilter = new OAuth2ClientAuthenticationProcessingFilter("/login/github");
+//        OAuth2RestTemplate githubTemplate = new OAuth2RestTemplate(github(), oauth2ClientContext);
+//        githubFilter.setRestTemplate(githubTemplate);
+//        githubFilter.setTokenServices(new UserInfoTokenServices(githubResource().getUserInfoUri(), github().getClientId()));
+//        filters.add(githubFilter);
 
         filter.setFilters(filters);
         return filter;
@@ -85,33 +85,53 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    @ConfigurationProperties("facebook.client")
-    OAuth2ProtectedResourceDetails facebook() {
-        return new AuthorizationCodeResourceDetails();
+    @ConfigurationProperties("facebook")
+    ClientResources facebook() {
+        return new ClientResources();
     }
 
-    @Bean
-    @ConfigurationProperties("facebook.resource")
-    ResourceServerProperties facebookResource() {
-        return new ResourceServerProperties();
+    class ClientResources {
+
+        private OAuth2ProtectedResourceDetails client = new AuthorizationCodeResourceDetails();
+        private ResourceServerProperties resource = new ResourceServerProperties();
+
+        public OAuth2ProtectedResourceDetails getClient() {
+            return client;
+        }
+
+        public ResourceServerProperties getResource() {
+            return resource;
+        }
     }
 
-    @Bean
-    @ConfigurationProperties("github.client")
-    OAuth2ProtectedResourceDetails github() {
-        return new AuthorizationCodeResourceDetails();
-    }
+//    @Bean
+//    @ConfigurationProperties("facebook.client")
+//    OAuth2ProtectedResourceDetails facebook() {
+//        return new AuthorizationCodeResourceDetails();
+//    }
+//
+//    @Bean
+//    @ConfigurationProperties("facebook.resource")
+//    ResourceServerProperties facebookResource() {
+//        return new ResourceServerProperties();
+//    }
 
-    @Bean
-    @ConfigurationProperties("github.resource")
-    ResourceServerProperties githubResource() {
-        return new ResourceServerProperties();
-    }
+//    @Bean
+//    @ConfigurationProperties("github.client")
+//    OAuth2ProtectedResourceDetails github() {
+//        return new AuthorizationCodeResourceDetails();
+//    }
+//
+//    @Bean
+//    @ConfigurationProperties("github.resource")
+//    ResourceServerProperties githubResource() {
+//        return new ResourceServerProperties();
+//    }
 
     @Configuration
     @EnableResourceServer
-    protected static class ResourceServerConfiguration
-            extends ResourceServerConfigurerAdapter {
+    protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+
         @Override
         public void configure(HttpSecurity http) throws Exception {
             http
