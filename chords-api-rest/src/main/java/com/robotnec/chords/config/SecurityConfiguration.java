@@ -50,7 +50,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
     }
 
+    @Bean
+    public FilterRegistrationBean oauth2ClientFilterRegistration(OAuth2ClientContextFilter filter) {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(filter);
+        registration.setOrder(-100);
+        return registration;
+    }
+
     private Filter ssoFilter() {
+
         CompositeFilter filter = new CompositeFilter();
         List<Filter> filters = new ArrayList<>();
 
@@ -68,6 +77,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         filter.setFilters(filters);
         return filter;
+
     }
 
     @Bean
@@ -94,11 +104,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new ResourceServerProperties();
     }
 
-    @Bean
-    public FilterRegistrationBean oauth2ClientFilterRegistration(OAuth2ClientContextFilter filter) {
-        FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(filter);
-        registration.setOrder(-100);
-        return registration;
-    }
 }
