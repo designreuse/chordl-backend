@@ -1,7 +1,6 @@
 package com.robotnec.chords.persistence.entity.user;
 
 
-import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;

@@ -2,6 +2,7 @@ package com.robotnec.chords.validator;
 
 import com.robotnec.chords.persistence.entity.user.User;
 import com.robotnec.chords.service.UserService;
+import com.robotnec.chords.web.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -20,7 +21,7 @@ public class UserValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        User user = (User) o;
+        UserDto user = (UserDto) o;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "NotEmpty");
         if (user.getUsername().length() < 1 || user.getUsername().length() > 32) {

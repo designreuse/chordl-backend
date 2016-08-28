@@ -8,6 +8,7 @@ import com.robotnec.chords.web.dto.SongDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class SongsController {
     @Autowired
     private Mapper mapper;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<SongDto>> getSongs() {
         return ResponseEntity.ok(mapper.mapAsList(songService.getSongs(), SongDto.class));
