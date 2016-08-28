@@ -6,6 +6,8 @@
 </head>
 <body>
 <p th:text="'Hello, ' + ${name} + '!'" />
-<a th:href="@{/logout}">Logout</a>
+<form action="#" th:action="@{/logout}" method="post">
+    <input type="submit" />
+</form>
 </body>
 </html>
