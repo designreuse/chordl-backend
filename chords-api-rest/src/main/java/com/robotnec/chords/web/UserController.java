@@ -41,8 +41,8 @@ public class UserController {
 //        return "registration";
 //    }
 
-    @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public ResponseEntity registration(@RequestBody UserDto userDto, BindingResult bindingResult) {
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ResponseEntity register(@RequestBody UserDto userDto, BindingResult bindingResult) {
         userValidator.validate(userDto, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new InvalidRequestException("Validation errors", bindingResult);

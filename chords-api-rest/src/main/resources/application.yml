@@ -5,10 +5,6 @@ server:
     enabled: true
     mimeTypes: text/html,text/xml,text/plain,application/json,application/xml
 
-logging:
-  config: classpath:logback-develop.xml
-  path: tmp/logs
-
 spring:
   jackson:
     mapper.default_view_inclusion: false
@@ -43,6 +39,13 @@ endpoints.enabled: false
 endpoints:
   info.enabled: true
   health.enabled: true
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.hibernate: DEBUG
+    com.robotnec.chords: DEBUG
+    ma.glasnost.orika: WARN
 
 
 
