@@ -50,7 +50,7 @@ public class UserController {
 
         userService.save(mapper.map(userDto, User.class));
 
-        securityService.autologin(userDto.getPassword(), userDto.getPasswordConfirm());
+        securityService.autologin(userDto.getUsername(), userDto.getPasswordConfirm());
 
         return ResponseEntity.ok(userDto);
     }
