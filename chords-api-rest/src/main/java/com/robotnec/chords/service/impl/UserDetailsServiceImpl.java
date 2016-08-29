@@ -1,6 +1,5 @@
 package com.robotnec.chords.service.impl;
 
-import com.robotnec.chords.persistence.entity.user.Role;
 import com.robotnec.chords.persistence.entity.user.User;
 import com.robotnec.chords.persistence.repository.UserRepository;
 import lombok.extern.log4j.Log4j;
@@ -13,8 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j
@@ -28,11 +27,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
 
-        log.debug("Found by username: " + username + " user: " + user);
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        for (Role role : user.getRoles()) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
         }
+
+        Set<GrantedAuthority> grantedAuthorities =
+                user.getRoles()
+                        .stream()
+                        .map(role -> new SimpleGrantedAuthority(role.getName()))
+                        .collect(Collectors.toSet());
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuthorities);
     }

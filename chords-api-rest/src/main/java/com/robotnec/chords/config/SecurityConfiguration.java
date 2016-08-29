@@ -1,96 +1,62 @@
 package com.robotnec.chords.config;
 
-import com.robotnec.chords.config.auth.AuthFailureHandler;
-import com.robotnec.chords.config.auth.AuthSuccessHandler;
-import com.robotnec.chords.config.auth.HttpAuthenticationEntryPoint;
-import com.robotnec.chords.config.auth.HttpLogoutSuccessHandler;
-import com.robotnec.chords.service.impl.UserDetailsServiceImpl;
+import com.robotnec.chords.config.jwt.JwtAuthenticationEntryPoint;
+import com.robotnec.chords.config.jwt.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
+    private JwtAuthenticationEntryPoint unauthorizedHandler;
+
+    @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired
-    private HttpAuthenticationEntryPoint authenticationEntryPoint;
-
-    @Autowired
-    private AuthSuccessHandler authSuccessHandler;
-
-    @Autowired
-    private AuthFailureHandler authFailureHandler;
-
-    @Autowired
-    private HttpLogoutSuccessHandler logoutSuccessHandler;
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+        authenticationManagerBuilder
+                .userDetailsService(this.userDetailsService)
+                .passwordEncoder(passwordEncoder());
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return new UserDetailsServiceImpl();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
+    public JwtAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
+        return new JwtAuthenticationTokenFilter();
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider());
-    }
-
-    @Override
-    protected AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .authorizeRequests()
-                    .antMatchers("/auth/**","/swagger**", "/webjars/**", "/configuration/**", "/v2/**").permitAll()
-                    .anyRequest().authenticated()
-                    .and()
-                .authenticationProvider(authenticationProvider())
-                    .exceptionHandling()
-                    .authenticationEntryPoint(authenticationEntryPoint)
-                    .and()
-                .logout()
-                    .permitAll()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/auth/login", "DELETE"))
-                    .logoutSuccessHandler(logoutSuccessHandler)
-                    .and()
-                .sessionManagement()
-                .maximumSessions(1);
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .antMatchers("/auth/**").permitAll()
+                .anyRequest().authenticated();
 
-        http.authorizeRequests().anyRequest().authenticated();
-    }
+        // Custom JWT based security filter
+        httpSecurity
+                .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(11);
+        // disable page caching
+        httpSecurity.headers().cacheControl();
     }
 }

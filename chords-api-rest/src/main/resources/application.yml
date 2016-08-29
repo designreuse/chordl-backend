@@ -30,6 +30,15 @@ spring:
     solr:
       host: http://localhost:8983/solr/chords-core
 
+jwt:
+  header: Authorization
+  secret: secret
+  expiration: 604800
+  route:
+    authentication:
+      path: auth
+      refresh: refresh
+
 flyway:
   db:
     clean: ${flyway.clean:false}
