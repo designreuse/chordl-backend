@@ -6,6 +6,7 @@ import com.robotnec.chords.persistence.entity.user.User;
 import com.robotnec.chords.service.SecurityService;
 import com.robotnec.chords.service.UserService;
 import com.robotnec.chords.validator.UserValidator;
+import com.robotnec.chords.web.dto.TokenDto;
 import com.robotnec.chords.web.dto.UserDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import lombok.extern.slf4j.Slf4j;
@@ -36,27 +37,26 @@ public class UserController {
     @Autowired
     private Mapper mapper;
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public ResponseEntity register(@RequestBody UserDto userDto, BindingResult bindingResult) {
-        userValidator.validate(userDto, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new InvalidRequestException("Validation errors", bindingResult);
+        if (userService.findByUsername(userDto.getUsername()) == null) {
+            userValidator.validate(userDto, bindingResult);
+            if (bindingResult.hasErrors()) {
+                throw new InvalidRequestException("Validation errors", bindingResult);
+            }
+
+            userService.save(mapper.map(userDto, User.class));
         }
 
-        userService.save(mapper.map(userDto, User.class));
+        securityService.login(userDto.getUsername(), userDto.getPassword());
 
-        securityService.autologin(userDto.getUsername(), userDto.getPasswordConfirm());
+        TokenDto token = issueToken(userDto.getUsername());
 
-        // TODO
-        String token = issueToken(userDto.getUsername());
-
-        userDto.setPassword("");
-
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok(token);
     }
 
-    private String issueToken(String username) {
-        return username + "-token1";
+    private TokenDto issueToken(String username) {
+        return new TokenDto(username);
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)

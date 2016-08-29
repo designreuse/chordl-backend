@@ -3,5 +3,5 @@ package com.robotnec.chords.service;
 public interface SecurityService {
     String findLoggedInUsername();
 
-    void autologin(String username, String password);
+    void login(String username, String password);
 }

@@ -11,7 +11,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class UserDto {
-    private String username;
-    private String password;
+public class TokenDto {
+    private String jwtToken;
 }
