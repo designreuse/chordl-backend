@@ -1,6 +1,7 @@
 package com.robotnec.chords.web;
 
 import com.robotnec.chords.exception.InvalidRequestException;
+import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.persistence.entity.user.User;
 import com.robotnec.chords.service.SecurityService;
 import com.robotnec.chords.service.UserService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -34,13 +36,6 @@ public class UserController {
     @Autowired
     private Mapper mapper;
 
-//    @RequestMapping(value = "/registration", method = RequestMethod.GET)
-//    public String registration(Model model) {
-//        model.addAttribute("userForm", new User());
-//
-//        return "registration";
-//    }
-
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity register(@RequestBody UserDto userDto, BindingResult bindingResult) {
         userValidator.validate(userDto, bindingResult);
@@ -52,9 +47,12 @@ public class UserController {
 
         securityService.autologin(userDto.getUsername(), userDto.getPasswordConfirm());
 
+        // TODO
         String token = issueToken(userDto.getUsername());
 
-        return ResponseEntity.ok(token);
+        userDto.setPassword("");
+
+        return ResponseEntity.ok(userDto);
     }
 
     private String issueToken(String username) {
@@ -62,24 +60,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    ResponseEntity getCurrentUser(Principal principal) {
-        return ResponseEntity.ok(principal);
+    public ResponseEntity getCurrentUser(Principal principal) {
+        return Optional.ofNullable(principal)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException("User"));
     }
-
-//    @RequestMapping(value = "/login", method = RequestMethod.GET)
-//    public String login(Model model, String error, String logout) {
-//        if (error != null)
-//            model.addAttribute("error", "Your username and password is invalid.");
-//
-//        if (logout != null)
-//            model.addAttribute("message", "You have been logged out successfully.");
-//
-//        return "login";
-//    }
-
-//    @RequestMapping(value = {"/", "/welcome"}, method = RequestMethod.GET)
-//    public String welcome(Model model, Principal principal) {
-//        model.addAttribute("name", principal.getName());
-//        return "welcome";
-//    }
 }

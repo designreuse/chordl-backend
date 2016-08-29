@@ -42,9 +42,9 @@ endpoints:
 
 logging:
   level:
-    org.springframework.web: DEBUG
-    org.hibernate: DEBUG
     com.robotnec.chords: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate: WARN
     ma.glasnost.orika: WARN
 
 
