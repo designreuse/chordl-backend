@@ -20,7 +20,7 @@ import java.security.Principal;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "/auth", produces = "application/json;charset=UTF-8")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -52,7 +52,13 @@ public class UserController {
 
         securityService.autologin(userDto.getUsername(), userDto.getPasswordConfirm());
 
-        return ResponseEntity.ok(userDto);
+        String token = issueToken(userDto.getUsername());
+
+        return ResponseEntity.ok(token);
+    }
+
+    private String issueToken(String username) {
+        return username + "-token1";
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
