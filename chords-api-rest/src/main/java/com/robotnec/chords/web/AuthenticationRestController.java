@@ -1,8 +1,14 @@
 package com.robotnec.chords.web;
 
 import com.robotnec.chords.config.jwt.JwtTokenUtil;
+import com.robotnec.chords.exception.InvalidRequestException;
+import com.robotnec.chords.persistence.entity.user.ChordsUser;
+import com.robotnec.chords.service.UserService;
+import com.robotnec.chords.validator.UserValidator;
 import com.robotnec.chords.web.dto.TokenDto;
 import com.robotnec.chords.web.dto.UserDto;
+import com.robotnec.chords.web.mapping.Mapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -11,18 +17,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/auth")
+@Slf4j
 public class AuthenticationRestController {
 
     @Autowired
@@ -35,29 +40,44 @@ public class AuthenticationRestController {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserService userService;
+
+    @Autowired
+    private UserValidator userValidator;
+
+    @Autowired
+    private Mapper mapper;
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public User getAuthenticatedUser(HttpServletRequest request) {
-        String token = request.getHeader(tokenHeader);
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        return (User) userDetailsService.loadUserByUsername(username);
+    public Principal getAuthenticatedUser(Principal principal) {
+//        String token = request.getHeader(tokenHeader);
+//        String username = jwtTokenUtil.getUsernameFromToken(token);
+//        log.debug("get user, token: " + token + " username: " + username);
+        return principal;
     }
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody UserDto authenticationRequest) throws AuthenticationException {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody UserDto userDto, BindingResult bindingResult) throws AuthenticationException {
+        if (userService.findByUsername(userDto.getUsername()) == null) {
+            userValidator.validate(userDto, bindingResult);
+            if (bindingResult.hasErrors()) {
+                throw new InvalidRequestException("Validation errors", bindingResult);
+            }
+
+            userService.save(mapper.map(userDto, ChordsUser.class));
+        }
 
         // Perform the security
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        authenticationRequest.getUsername(),
-                        authenticationRequest.getPassword()
+                        userDto.getUsername(),
+                        userDto.getPassword()
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Reload password post-security so we can generate token
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        final ChordsUser userDetails = userService.findByUsername(userDto.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
 
         // Return the token

@@ -1,6 +1,5 @@
 package com.robotnec.chords.validator;
 
-import com.robotnec.chords.persistence.entity.user.User;
 import com.robotnec.chords.service.UserService;
 import com.robotnec.chords.web.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ public class UserValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> aClass) {
-        return User.class.equals(aClass);
+        return UserDto.class.equals(aClass);
     }
 
     @Override

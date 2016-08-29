@@ -1,8 +1,8 @@
 package com.robotnec.chords.persistence.repository;
 
-import com.robotnec.chords.persistence.entity.user.User;
+import com.robotnec.chords.persistence.entity.user.ChordsUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-    User findByUsername(String username);
+public interface UserRepository extends JpaRepository<ChordsUser, Long> {
+    ChordsUser findByUsername(String username);
 }

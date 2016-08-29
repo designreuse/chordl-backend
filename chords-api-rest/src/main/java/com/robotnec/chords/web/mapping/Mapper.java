@@ -3,7 +3,7 @@ package com.robotnec.chords.web.mapping;
 import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.persistence.entity.Song;
 import com.robotnec.chords.persistence.entity.SongSolrDocument;
-import com.robotnec.chords.persistence.entity.user.User;
+import com.robotnec.chords.persistence.entity.user.ChordsUser;
 import com.robotnec.chords.web.dto.PerformerDto;
 import com.robotnec.chords.web.dto.SearchNodeDto;
 import com.robotnec.chords.web.dto.SongDto;
@@ -48,7 +48,7 @@ public class Mapper {
                 .field("id", "songId")
                 .byDefault()
                 .register();
-        mapperFactory.classMap(UserDto.class, User.class)
+        mapperFactory.classMap(UserDto.class, ChordsUser.class)
                 .byDefault()
                 .register();
         mapperFacade = mapperFactory.getMapperFacade();

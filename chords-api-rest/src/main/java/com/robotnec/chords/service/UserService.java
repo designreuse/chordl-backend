@@ -1,10 +1,10 @@
 package com.robotnec.chords.service;
 
 
-import com.robotnec.chords.persistence.entity.user.User;
+import com.robotnec.chords.persistence.entity.user.ChordsUser;
 
 public interface UserService {
-    void save(User user);
+    void save(ChordsUser user);
 
-    User findByUsername(String username);
+    ChordsUser findByUsername(String username);
 }

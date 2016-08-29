@@ -9,7 +9,7 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 @ToString
-public class User {
+public class ChordsUser {
     private Long id;
     private String username;
     private String password;

@@ -1,6 +1,6 @@
 package com.robotnec.chords.service.impl;
 
-import com.robotnec.chords.persistence.entity.user.User;
+import com.robotnec.chords.persistence.entity.user.ChordsUser;
 import com.robotnec.chords.persistence.repository.RoleRepository;
 import com.robotnec.chords.persistence.repository.UserRepository;
 import com.robotnec.chords.service.UserService;
@@ -22,14 +22,14 @@ public class UserServiceImpl implements UserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public void save(User user) {
+    public void save(ChordsUser user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setRoles(new HashSet<>(roleRepository.findAll()));
         userRepository.save(user);
     }
 
     @Override
-    public User findByUsername(String username) {
+    public ChordsUser findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 }

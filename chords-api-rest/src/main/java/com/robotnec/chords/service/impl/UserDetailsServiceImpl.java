@@ -1,6 +1,6 @@
 package com.robotnec.chords.service.impl;
 
-import com.robotnec.chords.persistence.entity.user.User;
+import com.robotnec.chords.persistence.entity.user.ChordsUser;
 import com.robotnec.chords.persistence.repository.UserRepository;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        ChordsUser user = userRepository.findByUsername(username);
 
         if (user == null) {
             throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
