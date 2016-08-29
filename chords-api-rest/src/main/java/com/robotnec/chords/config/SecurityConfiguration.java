@@ -6,8 +6,10 @@ import com.robotnec.chords.config.auth.HttpAuthenticationEntryPoint;
 import com.robotnec.chords.config.auth.HttpLogoutSuccessHandler;
 import com.robotnec.chords.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -16,9 +18,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.access.AccessDeniedHandler;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 @Configuration
+@EnableOAuth2Sso
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -76,21 +85,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .exceptionHandling()
                     .authenticationEntryPoint(authenticationEntryPoint)
                     .and()
-                .formLogin()
-                    .permitAll()
-                    .loginProcessingUrl("/auth/login")
-                    .usernameParameter("username")
-                    .passwordParameter("password")
-                    .successHandler(authSuccessHandler)
-                    .failureHandler(authFailureHandler)
-                    .and()
                 .logout()
                     .permitAll()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/auth/login", "DELETE"))
                     .logoutSuccessHandler(logoutSuccessHandler)
-                    .and()
-                .sessionManagement()
-                .maximumSessions(1);
+                    .and();
+//                    .and()
+//                .logout()
+//                    .permitAll()
+//                    .logoutRequestMatcher(new AntPathRequestMatcher("/auth/login", "DELETE"))
+//                    .logoutSuccessHandler(logoutSuccessHandler)
+//                    .and()
+//                .sessionManagement()
+//                .maximumSessions(1);
 
         http.authorizeRequests().anyRequest().authenticated();
     }
