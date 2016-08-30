@@ -1,6 +1,7 @@
 package com.robotnec.chords.web.dto;
 
 import lombok.*;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author zak <zak@robotnec.com>
@@ -11,7 +12,11 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class UserDto {
-    private String username;
-    private String password;
+public class CredentialsDto {
+
+    @NotEmpty
+    private String userId;
+
+    @NotEmpty
+    private String socialToken;
 }

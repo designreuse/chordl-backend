@@ -34,16 +34,16 @@ public class JwtTokenServiceImpl implements JwtTokenService {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_EXP, createExpiration());
         claims.put(CLAIM_KEY_IAT, createIssuedAt());
-        claims.put(CLAIM_KEY_SUB, user.getId());
+        claims.put(CLAIM_KEY_SUB, String.valueOf(user.getId()));
         claims.put(CLAIM_KEY_NAME, user.getUsername());
         return new JWTSigner(secret).sign(claims);
     }
 
     @Override
     public Optional<JwtClaims> validateToken(String token) {
-        log.debug("Validate token: ", token);
+        log.debug("Validate token: " + token);
 
-        JwtClaims jwtClaims = null;
+        JwtClaims jwtClaims;
 
         Map<String, Object> claims;
 
@@ -51,34 +51,21 @@ public class JwtTokenServiceImpl implements JwtTokenService {
             JWTVerifier verifier = new JWTVerifier(secret);
             claims = verifier.verify(token);
         } catch (Exception e) {
-            log.warn("Can't verify token", e.getMessage());
+            log.warn("Can't verify token: " + e.getMessage());
             return Optional.empty();
         }
 
-        Long userId = (Long) claims.get(CLAIM_KEY_SUB);
+        String userId = (String) claims.get(CLAIM_KEY_SUB);
         String username = (String) claims.get(CLAIM_KEY_NAME);
-        Long expired = (Long) claims.get(CLAIM_KEY_EXP);
-        Long issuedAt = (Long) claims.get(CLAIM_KEY_IAT);
+        Integer issuedAt = (Integer) claims.get(CLAIM_KEY_IAT);
 
-        Date expiredDate = new Date(expired * 1000);
-        Date issuedAtDate = new Date(issuedAt * 1000);
-
-        if (!isTokenExpired(expiredDate)) {
-            jwtClaims = JwtClaims.builder()
-                    .userId(userId)
-                    .username(username)
-                    .expiration(expiredDate)
-                    .issuedAt(issuedAtDate)
-                    .build();
-        } else {
-            log.warn("Token was expired at: " + expiredDate);
-        }
+        jwtClaims = JwtClaims.builder()
+                .userId(userId)
+                .username(username)
+                .issuedAt(new Date(issuedAt * 1000L))
+                .build();
 
         return Optional.ofNullable(jwtClaims);
-    }
-
-    private Boolean isTokenExpired(Date expired) {
-        return expired.before(new Date());
     }
 
     private long createIssuedAt() {

@@ -7,7 +7,7 @@ import com.robotnec.chords.persistence.entity.user.ChordsUser;
 import com.robotnec.chords.web.dto.PerformerDto;
 import com.robotnec.chords.web.dto.SearchNodeDto;
 import com.robotnec.chords.web.dto.SongDto;
-import com.robotnec.chords.web.dto.UserDto;
+import com.robotnec.chords.web.dto.CredentialsDto;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
@@ -48,8 +48,9 @@ public class Mapper {
                 .field("id", "songId")
                 .byDefault()
                 .register();
-        mapperFactory.classMap(UserDto.class, ChordsUser.class)
-                .byDefault()
+        mapperFactory.classMap(CredentialsDto.class, ChordsUser.class)
+                .field("userId", "username")
+                .field("socialToken", "password")
                 .register();
         mapperFacade = mapperFactory.getMapperFacade();
     }

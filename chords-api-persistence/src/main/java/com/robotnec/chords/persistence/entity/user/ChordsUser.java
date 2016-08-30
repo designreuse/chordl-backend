@@ -13,7 +13,6 @@ public class ChordsUser {
     private Long id;
     private String username;
     private String password;
-    private String passwordConfirm;
     private Set<Role> roles;
 
     @Id
@@ -40,15 +39,6 @@ public class ChordsUser {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    @Transient
-    public String getPasswordConfirm() {
-        return passwordConfirm;
-    }
-
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
     }
 
     @ManyToMany
