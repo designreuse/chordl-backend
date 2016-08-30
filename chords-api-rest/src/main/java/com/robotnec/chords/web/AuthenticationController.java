@@ -37,7 +37,7 @@ public class AuthenticationController {
     @Autowired
     private Mapper mapper;
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    @RequestMapping(value = "/me", method = RequestMethod.GET)
     public Principal getAuthenticatedUser(Principal principal) {
         return principal;
     }

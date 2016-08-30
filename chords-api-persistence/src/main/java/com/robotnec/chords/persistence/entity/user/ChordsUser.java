@@ -1,6 +1,9 @@
 package com.robotnec.chords.persistence.entity.user;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -9,6 +12,9 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChordsUser {
     private Long id;
     private String username;

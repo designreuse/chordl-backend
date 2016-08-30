@@ -57,11 +57,13 @@ public class JwtTokenServiceImpl implements JwtTokenService {
 
         String userId = (String) claims.get(CLAIM_KEY_SUB);
         String username = (String) claims.get(CLAIM_KEY_NAME);
+        Integer expired = (Integer) claims.get(CLAIM_KEY_EXP);
         Integer issuedAt = (Integer) claims.get(CLAIM_KEY_IAT);
 
         jwtClaims = JwtClaims.builder()
                 .userId(userId)
                 .username(username)
+                .expiration(new Date(expired * 1000L))
                 .issuedAt(new Date(issuedAt * 1000L))
                 .build();
 
