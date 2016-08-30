@@ -32,12 +32,9 @@ spring:
 
 jwt:
   header: Authorization
-  secret: secret
-  expiration: 604800
-  route:
-    authentication:
-      path: auth
-      refresh: refresh
+  scheme: Bearer
+  secret: 2aae6c35c94fcfb415dbe95f408b9ce91ee846ed
+  expiration: 60
 
 flyway:
   db:

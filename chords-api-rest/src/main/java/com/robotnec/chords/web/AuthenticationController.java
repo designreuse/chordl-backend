@@ -1,6 +1,6 @@
 package com.robotnec.chords.web;
 
-import com.robotnec.chords.config.jwt.JwtTokenUtil;
+import com.robotnec.chords.service.JwtTokenService;
 import com.robotnec.chords.exception.InvalidRequestException;
 import com.robotnec.chords.persistence.entity.user.ChordsUser;
 import com.robotnec.chords.service.UserService;
@@ -28,7 +28,7 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/auth")
 @Slf4j
-public class AuthenticationRestController {
+public class AuthenticationController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -37,7 +37,7 @@ public class AuthenticationRestController {
     private String tokenHeader;
 
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    private JwtTokenService jwtTokenService;
 
     @Autowired
     private UserService userService;
@@ -78,7 +78,7 @@ public class AuthenticationRestController {
 
         // Reload password post-security so we can generate token
         final ChordsUser userDetails = userService.findByUsername(userDto.getUsername());
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        final String token = jwtTokenService.generateToken(userDetails);
 
         // Return the token
         return ResponseEntity.ok(new TokenDto(token));
