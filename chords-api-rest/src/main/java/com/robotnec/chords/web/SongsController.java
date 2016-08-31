@@ -1,5 +1,6 @@
 package com.robotnec.chords.web;
 
+import com.robotnec.chords.config.access.AdminAccess;
 import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Song;
@@ -24,7 +25,7 @@ public class SongsController {
     @Autowired
     private Mapper mapper;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @AdminAccess
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<SongDto>> getSongs() {
         return ResponseEntity.ok(mapper.mapAsList(songService.getSongs(), SongDto.class));
@@ -49,6 +50,7 @@ public class SongsController {
                 .orElseThrow(IllegalStateException::new);
     }
 
+    @AdminAccess
     @RequestMapping(value = "/batch", method = RequestMethod.POST)
     public ResponseEntity<List<SongDto>> createSongs(@RequestBody List<SongDto> songDto) {
         return Optional.of(songDto)

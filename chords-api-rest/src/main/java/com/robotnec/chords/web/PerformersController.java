@@ -1,5 +1,6 @@
 package com.robotnec.chords.web;
 
+import com.robotnec.chords.config.access.AdminAccess;
 import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Performer;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -86,6 +88,7 @@ public class PerformersController {
                 .orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
+    @AdminAccess
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<PerformerDto> updatePerformer(@PathVariable("id") final Long id,
                                                         @RequestBody final PerformerDto songDto) {
@@ -98,6 +101,7 @@ public class PerformersController {
                 .orElseThrow(IllegalStateException::new);
     }
 
+    @AdminAccess
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<PerformerDto> deletePerformer(@PathVariable("id") final Long id) {
         return Optional.of(id)
