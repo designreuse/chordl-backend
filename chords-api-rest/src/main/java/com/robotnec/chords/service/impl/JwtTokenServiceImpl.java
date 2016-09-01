@@ -22,6 +22,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     private static final String CLAIM_KEY_EXP = "exp";
     private static final String CLAIM_KEY_IAT = "iat";
     private static final String CLAIM_KEY_NAME = "name";
+    private static final String CLAIM_KEY_EMAIL = "email";
 
     @Value("${jwt.expiration}")
     private Long expiration;
@@ -34,8 +35,9 @@ public class JwtTokenServiceImpl implements JwtTokenService {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_EXP, createExpiration());
         claims.put(CLAIM_KEY_IAT, createIssuedAt());
-        claims.put(CLAIM_KEY_SUB, String.valueOf(user.getId()));
-        claims.put(CLAIM_KEY_NAME, user.getUsername());
+        claims.put(CLAIM_KEY_SUB, user.getId());
+        claims.put(CLAIM_KEY_NAME, user.getName());
+        claims.put(CLAIM_KEY_EMAIL, user.getEmail());
         return new JWTSigner(secret).sign(claims);
     }
 
@@ -55,14 +57,16 @@ public class JwtTokenServiceImpl implements JwtTokenService {
             return Optional.empty();
         }
 
-        String userId = (String) claims.get(CLAIM_KEY_SUB);
+        Integer userId = (Integer) claims.get(CLAIM_KEY_SUB);
         String username = (String) claims.get(CLAIM_KEY_NAME);
         Integer expired = (Integer) claims.get(CLAIM_KEY_EXP);
         Integer issuedAt = (Integer) claims.get(CLAIM_KEY_IAT);
+        String email = (String) claims.get(CLAIM_KEY_EMAIL);
 
         jwtClaims = JwtClaims.builder()
                 .userId(userId)
                 .username(username)
+                .email(email)
                 .expiration(new Date(expired * 1000L))
                 .issuedAt(new Date(issuedAt * 1000L))
                 .build();

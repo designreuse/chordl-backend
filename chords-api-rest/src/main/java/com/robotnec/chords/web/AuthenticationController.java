@@ -5,6 +5,7 @@ import com.robotnec.chords.persistence.entity.user.ChordsUser;
 import com.robotnec.chords.service.FacebookService;
 import com.robotnec.chords.service.JwtTokenService;
 import com.robotnec.chords.service.UserService;
+import com.robotnec.chords.web.dto.ChordsUserDto;
 import com.robotnec.chords.web.dto.CredentialsDto;
 import com.robotnec.chords.web.dto.TokenDto;
 import com.robotnec.chords.web.mapping.Mapper;
@@ -40,9 +41,11 @@ public class AuthenticationController {
     private Mapper mapper;
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
-    public Principal me(Principal principal) {
-        // TODO use UserDto
-        return principal;
+    public ResponseEntity me(Principal principal) {
+        return userService.findByEmail(principal.getName())
+                .map(chordsUser -> mapper.map(chordsUser, ChordsUserDto.class))
+                .map(ResponseEntity::ok)
+                .orElse(null);
     }
 
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
@@ -60,7 +63,7 @@ public class AuthenticationController {
     }
 
     private ChordsUser findOrCreateChordUser(User facebookUser) {
-        return userService.findByUsername(facebookUser.getId())
+        return userService.findByEmail(facebookUser.getEmail())
                 .orElseGet(() -> userService.save(mapper.map(facebookUser, ChordsUser.class)));
     }
 

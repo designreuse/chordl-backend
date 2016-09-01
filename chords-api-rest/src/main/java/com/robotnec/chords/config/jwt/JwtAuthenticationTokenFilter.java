@@ -66,10 +66,14 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
 
         log.debug("Current authentication: " + currentAuth);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(jwtClaims.getUsername());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(jwtClaims.getEmail());
 
         if (userDetails != null) {
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             return true;

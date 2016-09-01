@@ -1,37 +1,27 @@
---
--- Table structure for table `role`
---
-
 DROP TABLE IF EXISTS `role`;
+DROP TABLE IF EXISTS `user`;
+
 CREATE TABLE `role` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) DEFAULT NULL,
+  `name` varchar(45) DEFAULT NULL UNIQUE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `role`
---
-
 LOCK TABLES `role` WRITE;
-INSERT INTO `role` VALUES (1,'ROLE_USER');
+INSERT INTO `role` VALUES (1, 'ROLE_USER');
+INSERT INTO `role` VALUES (2, 'ROLE_MODERATOR');
+INSERT INTO `role` VALUES (3, 'ROLE_ADMIN');
 UNLOCK TABLES;
 
---
--- Table structure for table `user`
---
-
-DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) DEFAULT NULL UNIQUE,
-  `password` varchar(255) DEFAULT NULL,
+  `email` varchar(255) NOT NULL UNIQUE,
+  `name` varchar(255) NOT NULL,
+  `facebook_user_id` varchar(255) NOT NULL,
+  `facebook_link` varchar(255) NOT NULL,
+  `has_favorites` bool DEFAULT FALSE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-
---
--- Table structure for table `user_role`
---
 
 DROP TABLE IF EXISTS `user_role`;
 CREATE TABLE `user_role` (

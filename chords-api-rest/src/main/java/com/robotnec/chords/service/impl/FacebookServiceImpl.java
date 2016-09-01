@@ -1,8 +1,8 @@
 package com.robotnec.chords.service.impl;
 
+import com.robotnec.chords.facebook.FacebookCheckTokenResponseDto;
 import com.robotnec.chords.service.FacebookService;
 import com.robotnec.chords.web.dto.CredentialsDto;
-import com.robotnec.chords.facebook.FacebookCheckTokenResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,6 @@ import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.oauth2.OAuth2Operations;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.AsyncRestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 

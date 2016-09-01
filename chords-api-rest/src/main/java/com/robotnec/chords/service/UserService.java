@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface UserService {
     ChordsUser save(ChordsUser user);
 
-    Optional<ChordsUser> findByUsername(String username);
-
     Optional<ChordsUser> findByEmail(String email);
+
+    Optional<ChordsUser> findById(long userId);
 }

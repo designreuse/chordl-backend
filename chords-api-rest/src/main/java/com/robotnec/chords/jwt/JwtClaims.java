@@ -11,8 +11,9 @@ import java.util.Date;
 @Builder
 @ToString
 public class JwtClaims {
-    private String userId;
+    private long userId;
     private String username;
+    private String email;
     private Date expiration;
     private Date issuedAt;
 }

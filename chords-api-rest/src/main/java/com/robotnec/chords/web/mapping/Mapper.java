@@ -50,8 +50,10 @@ public class Mapper {
                 .byDefault()
                 .register();
         mapperFactory.classMap(User.class, ChordsUser.class)
-                .field("id", "username")
-                .field("email", "password")
+                .field("email", "email")
+                .field("id", "facebookUserId")
+                .field("name", "name")
+                .field("link", "facebookLink")
                 .register();
         mapperFacade = mapperFactory.getMapperFacade();
     }

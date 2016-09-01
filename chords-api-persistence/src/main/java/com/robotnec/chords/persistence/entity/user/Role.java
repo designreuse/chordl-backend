@@ -1,39 +1,24 @@
 package com.robotnec.chords.persistence.entity.user;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
+@Data
+@EqualsAndHashCode(of = {"id"})
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Table(name = "role")
 public class Role {
-    private Long id;
-    private String name;
-    private Set<ChordsUser> users;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    @GeneratedValue
+    private Long id;
+    private String name;
 
     @ManyToMany(mappedBy = "roles")
-    public Set<ChordsUser> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<ChordsUser> users) {
-        this.users = users;
-    }
+    private Set<ChordsUser> users;
 }

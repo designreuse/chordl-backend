@@ -4,5 +4,5 @@ import com.robotnec.chords.persistence.entity.user.ChordsUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<ChordsUser, Long> {
-    ChordsUser findByUsername(String username);
+    ChordsUser findByEmail(String email);
 }

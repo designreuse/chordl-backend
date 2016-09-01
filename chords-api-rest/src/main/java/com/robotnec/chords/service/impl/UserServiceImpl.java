@@ -1,15 +1,14 @@
 package com.robotnec.chords.service.impl;
 
 import com.robotnec.chords.persistence.entity.user.ChordsUser;
-import com.robotnec.chords.persistence.repository.RoleRepository;
 import com.robotnec.chords.persistence.repository.UserRepository;
+import com.robotnec.chords.service.RoleService;
 import com.robotnec.chords.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.Optional;
 
 @Service
@@ -20,28 +19,25 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private RoleService roleService;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
+    @Transactional
     @Override
     public ChordsUser save(ChordsUser user) {
-        log.debug("Save user {}", user);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setRoles(new HashSet<>(roleRepository.findAll()));
-        return userRepository.save(user);
-    }
-
-    @Override
-    public Optional<ChordsUser> findByUsername(String username) {
-        log.debug("Try to find by username {}", username);
-        return Optional.ofNullable(userRepository.findByUsername(username));
+        user.setRoles(roleService.getAdminRoles());
+        ChordsUser saved = userRepository.save(user);
+        log.debug("Saved user {}", user);
+        return saved;
     }
 
     @Override
     public Optional<ChordsUser> findByEmail(String email) {
-        // TODO
-        return null;
+        log.debug("Try to find by email {}", email);
+        return Optional.ofNullable(userRepository.findByEmail(email));
+    }
+
+    @Override
+    public Optional<ChordsUser> findById(long userId) {
+        return Optional.ofNullable(userRepository.findOne(userId));
     }
 }
