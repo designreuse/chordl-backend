@@ -4,12 +4,15 @@ import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.persistence.entity.Song;
 import com.robotnec.chords.persistence.entity.SongSolrDocument;
 import com.robotnec.chords.persistence.entity.user.ChordsUser;
+import com.robotnec.chords.persistence.entity.user.Role;
+import com.robotnec.chords.web.dto.ChordsUserDto;
 import com.robotnec.chords.web.dto.PerformerDto;
 import com.robotnec.chords.web.dto.SearchNodeDto;
 import com.robotnec.chords.web.dto.SongDto;
-import com.robotnec.chords.web.dto.CredentialsDto;
+import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author zak <zak@robotnec.com>
@@ -54,6 +58,17 @@ public class Mapper {
                 .field("id", "facebookUserId")
                 .field("name", "name")
                 .field("link", "facebookLink")
+                .register();
+        mapperFactory.classMap(ChordsUser.class, ChordsUserDto.class)
+                .byDefault()
+                .customize(new CustomMapper<ChordsUser, ChordsUserDto>() {
+                    @Override
+                    public void mapAtoB(ChordsUser a, ChordsUserDto b, MappingContext context) {
+                        b.setAuthorities(a.getRoles().stream()
+                                .map(Role::getName)
+                                .collect(Collectors.toList()));
+                    }
+                })
                 .register();
         mapperFacade = mapperFactory.getMapperFacade();
     }

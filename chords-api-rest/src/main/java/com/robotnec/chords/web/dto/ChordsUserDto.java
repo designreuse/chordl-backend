@@ -2,6 +2,8 @@ package com.robotnec.chords.web.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 /**
  * @author zak <zak@robotnec.com>
  */
@@ -18,5 +20,5 @@ public class ChordsUserDto {
     private String facebookUserId;
     private String facebookLink;
     private boolean hasFavorites;
-    private RoleDto role;
+    private List<String> authorities;
 }

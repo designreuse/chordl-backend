@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.security.Principal;
 
-@RestController
-@RequestMapping("/auth")
 @Slf4j
+@RestController
+@RequestMapping(value = "/auth", produces = "application/json;charset=UTF-8")
 public class AuthenticationController {
 
     @Autowired

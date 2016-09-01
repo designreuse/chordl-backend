@@ -6,10 +6,10 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Data
 @EqualsAndHashCode(of = {"id"})
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 @Builder
 @Table(name = "role")
 public class Role {
@@ -21,4 +21,9 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles")
     private Set<ChordsUser> users;
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
