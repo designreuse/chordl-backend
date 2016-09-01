@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.social.facebook.api.User;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,22 +51,17 @@ public class AuthenticationController {
             throw new InvalidRequestException(bindingResult);
         }
 
-        if (!userService.findByUsername(credentialsDto.getUserId()).isPresent()) {
-            // register new user
-            log.debug("Register new user: " + credentialsDto.getUserId());
-
-            ChordsUser newUser = facebookService.checkUserToken(credentialsDto.getSocialToken())
-                    .map(facebookUser -> userService.save(mapper.map(facebookUser, ChordsUser.class)))
-                    .orElseThrow(() -> new AuthorizationServiceException("Can't authenticate"));
-
-            log.debug("Registered new user: " + newUser);
-        }
-
-        return userService.findByUsername(credentialsDto.getUserId())
+        return facebookService.validateFacebookUser(credentialsDto)
+                .map(this::findOrCreateChordUser)
                 .map(user -> jwtTokenService.generateToken(user))
                 .map(TokenDto::new)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new AuthorizationServiceException("Can't issue access token"));
+                .orElseThrow(() -> new AuthorizationServiceException("Can't authenticate"));
+    }
+
+    private ChordsUser findOrCreateChordUser(User facebookUser) {
+        return userService.findByUsername(facebookUser.getId())
+                .orElseGet(() -> userService.save(mapper.map(facebookUser, ChordsUser.class)));
     }
 
 }

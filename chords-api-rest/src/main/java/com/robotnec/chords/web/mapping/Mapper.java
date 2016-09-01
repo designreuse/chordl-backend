@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.social.facebook.api.User;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -48,9 +49,9 @@ public class Mapper {
                 .field("id", "songId")
                 .byDefault()
                 .register();
-        mapperFactory.classMap(CredentialsDto.class, ChordsUser.class)
-                .field("userId", "username")
-                .field("socialToken", "password")
+        mapperFactory.classMap(User.class, ChordsUser.class)
+                .field("id", "username")
+                .field("email", "password")
                 .register();
         mapperFacade = mapperFactory.getMapperFacade();
     }

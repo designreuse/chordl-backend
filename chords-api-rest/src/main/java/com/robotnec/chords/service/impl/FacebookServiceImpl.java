@@ -1,6 +1,8 @@
 package com.robotnec.chords.service.impl;
 
 import com.robotnec.chords.service.FacebookService;
+import com.robotnec.chords.web.dto.CredentialsDto;
+import com.robotnec.chords.facebook.FacebookCheckTokenResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,8 @@ import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.oauth2.OAuth2Operations;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.AsyncRestOperations;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
@@ -25,22 +29,42 @@ public class FacebookServiceImpl implements FacebookService {
     private String fbAppSecret;
 
     @Override
-    public Optional<User> checkUserToken(String userToken) {
+    public Optional<User> validateFacebookUser(CredentialsDto credentials) {
         log.debug("Check user token");
 
-        Facebook facebook = new FacebookTemplate(userToken);
+        UriComponentsBuilder builder =
+                UriComponentsBuilder.fromHttpUrl("https://graph.facebook.com/debug_token")
+                        .queryParam("input_token", credentials.getSocialToken())
+                        .queryParam("access_token", fetchApplicationAccessToken());
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://graph.facebook.com/debug_token")
-                .queryParam("input_token", userToken)
-                .queryParam("access_token", fetchApplicationAccessToken());
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<FacebookCheckTokenResponseDto> response =
+                restTemplate.getForEntity(
+                        builder.build().encode().toUri(),
+                        FacebookCheckTokenResponseDto.class);
 
-        ResponseEntity<String> response = facebook.restOperations().getForEntity(
-                builder.build().encode().toUri(),
-                String.class);
+        FacebookCheckTokenResponseDto responseBody = response.getBody();
+        FacebookCheckTokenResponseDto.Data data = responseBody.getData();
 
-        log.debug("Check result: " + response.getBody());
+        User userProfile = null;
 
-        return Optional.ofNullable(facebook.userOperations().getUserProfile());
+        log.debug("Got data {}", data);
+
+        if (data.getError() == null) {
+            if (data.isValid()
+                    && data.getAppId().equals(fbAppId)
+                    && data.getUserId().equals(credentials.getUserId())) {
+                Facebook facebook = new FacebookTemplate(credentials.getSocialToken());
+                userProfile = facebook.userOperations().getUserProfile();
+                log.debug("Token valid!");
+            } else {
+                log.warn("Token is not valid!");
+            }
+        } else {
+            log.error("Checking token produces error, {}", data.getError());
+        }
+
+        return Optional.ofNullable(userProfile);
     }
 
 

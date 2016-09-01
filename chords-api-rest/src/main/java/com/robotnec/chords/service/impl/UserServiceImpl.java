@@ -27,6 +27,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ChordsUser save(ChordsUser user) {
+        log.debug("Save user {}", user);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setRoles(new HashSet<>(roleRepository.findAll()));
         return userRepository.save(user);
@@ -34,6 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<ChordsUser> findByUsername(String username) {
+        log.debug("Try to find by username {}", username);
         return Optional.ofNullable(userRepository.findByUsername(username));
     }
 
