@@ -2,6 +2,7 @@ package com.robotnec.chords.web;
 
 import com.robotnec.chords.exception.InvalidRequestException;
 import com.robotnec.chords.persistence.entity.user.ChordsUser;
+import com.robotnec.chords.service.FacebookService;
 import com.robotnec.chords.service.JwtTokenService;
 import com.robotnec.chords.service.UserService;
 import com.robotnec.chords.web.dto.CredentialsDto;
@@ -9,8 +10,8 @@ import com.robotnec.chords.web.dto.TokenDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,9 +26,6 @@ import java.security.Principal;
 @Slf4j
 public class AuthenticationController {
 
-    @Value("${jwt.header}")
-    private String tokenHeader;
-
     @Autowired
     private JwtTokenService jwtTokenService;
 
@@ -35,25 +33,39 @@ public class AuthenticationController {
     private UserService userService;
 
     @Autowired
+    private FacebookService facebookService;
+
+    @Autowired
     private Mapper mapper;
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
-    public Principal getAuthenticatedUser(Principal principal) {
+    public Principal me(Principal principal) {
+        // TODO use UserDto
         return principal;
     }
 
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
-    public ResponseEntity createAuthenticationToken(@Valid @RequestBody CredentialsDto credentialsDto, BindingResult bindingResult) {
+    public ResponseEntity authenticate(@Valid @RequestBody CredentialsDto credentialsDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new InvalidRequestException(bindingResult);
         }
 
-        if (userService.findByUsername(credentialsDto.getUserId()) == null) {
-            userService.save(mapper.map(credentialsDto, ChordsUser.class));
+        if (!userService.findByUsername(credentialsDto.getUserId()).isPresent()) {
+            // register new user
+            log.debug("Register new user: " + credentialsDto.getUserId());
+
+            ChordsUser newUser = facebookService.checkUserToken(credentialsDto.getSocialToken())
+                    .map(facebookUser -> userService.save(mapper.map(facebookUser, ChordsUser.class)))
+                    .orElseThrow(() -> new AuthorizationServiceException("Can't authenticate"));
+
+            log.debug("Registered new user: " + newUser);
         }
 
-        ChordsUser user = userService.findByUsername(credentialsDto.getUserId());
-
-        return ResponseEntity.ok(new TokenDto(jwtTokenService.generateToken(user)));
+        return userService.findByUsername(credentialsDto.getUserId())
+                .map(user -> jwtTokenService.generateToken(user))
+                .map(TokenDto::new)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new AuthorizationServiceException("Can't issue access token"));
     }
+
 }

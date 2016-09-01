@@ -3,8 +3,12 @@ package com.robotnec.chords.service;
 
 import com.robotnec.chords.persistence.entity.user.ChordsUser;
 
-public interface UserService {
-    void save(ChordsUser user);
+import java.util.Optional;
 
-    ChordsUser findByUsername(String username);
+public interface UserService {
+    ChordsUser save(ChordsUser user);
+
+    Optional<ChordsUser> findByUsername(String username);
+
+    Optional<ChordsUser> findByEmail(String email);
 }

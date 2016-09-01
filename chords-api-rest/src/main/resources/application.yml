@@ -29,6 +29,10 @@ spring:
   data:
     solr:
       host: http://localhost:8983/solr/chords-core
+  social:
+    facebook:
+      app-id: 1086354088118124
+      app-secret: 4a3ec7f1dae4e2e3c49c44e8d3daf2cf
 
 jwt:
   header: Authorization
