@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 public class JwtTokenServiceImpl implements JwtTokenService {
 
-    private static final String CLAIM_KEY_SUB = "SUB";
+    private static final String CLAIM_KEY_SUB = "sub";
     private static final String CLAIM_KEY_EXP = "exp";
     private static final String CLAIM_KEY_IAT = "iat";
     private static final String CLAIM_KEY_NAME = "name";
