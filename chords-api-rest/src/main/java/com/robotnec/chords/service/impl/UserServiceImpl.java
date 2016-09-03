@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public ChordsUser save(ChordsUser user) {
-        user.setRoles(roleService.getAdminRoles());
+        user.setRoles(roleService.getUserRoles());
         ChordsUser saved = userRepository.save(user);
         log.debug("Saved user {}", user);
         return saved;
@@ -34,11 +34,7 @@ public class UserServiceImpl implements UserService {
     public Optional<ChordsUser> findByEmail(String email) {
         log.debug("Try to find by email {}", email);
 
-        Optional<ChordsUser> chordsUser = Optional.ofNullable(userRepository.findByEmail(email));
-
-        log.debug("Found {}", chordsUser.get());
-
-        return chordsUser;
+        return Optional.ofNullable(userRepository.findByEmail(email));
     }
 
     @Override
