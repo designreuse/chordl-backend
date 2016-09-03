@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 public class JwtTokenServiceImpl implements JwtTokenService {
 
-    private static final String CLAIM_KEY_SUB = "sub";
+    private static final String CLAIM_KEY_USER_ID = "id";
     private static final String CLAIM_KEY_EXP = "exp";
     private static final String CLAIM_KEY_IAT = "iat";
     private static final String CLAIM_KEY_NAME = "name";
@@ -35,7 +35,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_EXP, createExpiration());
         claims.put(CLAIM_KEY_IAT, createIssuedAt());
-        claims.put(CLAIM_KEY_SUB, user.getId());
+        claims.put(CLAIM_KEY_USER_ID, user.getId());
         claims.put(CLAIM_KEY_NAME, user.getName());
         claims.put(CLAIM_KEY_EMAIL, user.getEmail());
         return new JWTSigner(secret).sign(claims);
@@ -57,7 +57,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
             return Optional.empty();
         }
 
-        Integer userId = (Integer) claims.get(CLAIM_KEY_SUB);
+        Integer userId = (Integer) claims.get(CLAIM_KEY_USER_ID);
         String username = (String) claims.get(CLAIM_KEY_NAME);
         Integer expired = (Integer) claims.get(CLAIM_KEY_EXP);
         Integer issuedAt = (Integer) claims.get(CLAIM_KEY_IAT);
