@@ -24,7 +24,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public ChordsUser save(ChordsUser user) {
-        user.setRoles(roleService.getUserRoles());
+        // TODO handle better
+        if (user.getFacebookUserId().equals("10210108552656409")) {
+            user.setRoles(roleService.getAdminRoles());
+        } else {
+            user.setRoles(roleService.getUserRoles());
+        }
+
         ChordsUser saved = userRepository.save(user);
         log.debug("Saved user {}", user);
         return saved;
