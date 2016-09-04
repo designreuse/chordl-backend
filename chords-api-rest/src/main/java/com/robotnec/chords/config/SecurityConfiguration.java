@@ -30,10 +30,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                     .antMatchers("/auth/signin",
-                            "/songs**",
-                            "/performers**",
-                            "/featured**",
-                            "/search**").permitAll()
+                            "/songs/**",
+                            "/performers/**",
+                            "/featured/**",
+                            "/search/**").permitAll()
                     .anyRequest().authenticated()
                     .and()
                 .exceptionHandling()
