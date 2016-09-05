@@ -28,7 +28,14 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public Page<SearchNodeDto> search(String term, Pageable pageable) {
-        term = ClientUtils.escapeQueryChars(term) + "~2";
+        String[] termTokens = term.split("\\s+");
+
+        List<String> queryTokens = new ArrayList<>();
+        for (String token : termTokens) {
+            queryTokens.add(ClientUtils.escapeQueryChars(token) + "~1");
+        }
+
+        term = String.join(" ", queryTokens);
 
         List<SearchNodeDto> results = new ArrayList<>();
 
