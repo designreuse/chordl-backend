@@ -73,8 +73,8 @@ public class SongsController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<SongDto> updateSong(@Valid @PathVariable("id") final Long id,
-                                              @RequestBody final SongDto songDto, BindingResult bindingResult) {
+    public ResponseEntity<SongDto> updateSong(@PathVariable("id") final Long id,
+                                              @Valid @RequestBody final SongDto songDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new InvalidRequestException(bindingResult);
         }
