@@ -40,7 +40,11 @@ public class UserServiceImpl implements UserService {
     public Optional<ChordsUser> findByEmail(String email) {
         log.debug("Try to find by email {}", email);
 
-        return Optional.ofNullable(userRepository.findByEmail(email));
+        ChordsUser user = userRepository.findByEmail(email);
+
+        log.debug("Found user: {}", user);
+
+        return Optional.ofNullable(user);
     }
 
     @Override

@@ -42,6 +42,7 @@ public class AuthenticationController {
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     public ResponseEntity me(Principal principal) {
+        log.debug("Call 'me' endpoint, current principal: {}", principal.getName());
         return userService.findByEmail(principal.getName())
                 .map(chordsUser -> mapper.map(chordsUser, ChordsUserDto.class))
                 .map(ResponseEntity::ok)

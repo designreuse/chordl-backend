@@ -42,7 +42,7 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
         String authHeader = httpRequest.getHeader(tokenHeader);
 
         try {
-            boolean authenticated = validateAuthHeaderAndGetToken(authHeader)
+            boolean authenticated = isAlreadyAuthenticated() || validateAuthHeaderAndGetToken(authHeader)
                     .flatMap((token) -> jwtTokenService.validateToken(token))
                     .map(jwtClaims -> authenticate(jwtClaims, httpRequest))
                     .orElse(false);
@@ -61,10 +61,6 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
 
     private boolean authenticate(JwtClaims jwtClaims, HttpServletRequest httpRequest) {
         log.debug("Got token claims: " + jwtClaims);
-
-        Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
-
-        log.debug("Current authentication: " + currentAuth);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(jwtClaims.getEmail());
 
@@ -106,5 +102,10 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
         }
 
         return Optional.ofNullable(jwtToken);
+    }
+
+    private boolean isAlreadyAuthenticated() {
+        Authentication existingAuth = SecurityContextHolder.getContext().getAuthentication();
+        return existingAuth != null && existingAuth.isAuthenticated();
     }
 }
