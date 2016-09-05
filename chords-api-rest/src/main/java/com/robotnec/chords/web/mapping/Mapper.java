@@ -47,6 +47,12 @@ public class Mapper {
                 .byDefault()
                 .register();
         mapperFactory.classMap(Performer.class, PerformerDto.class)
+                .customize(new CustomMapper<Performer, PerformerDto>() {
+                    @Override
+                    public void mapAtoB(Performer a, PerformerDto b, MappingContext context) {
+                        b.setSongCount(a.getSongs().size());
+                    }
+                })
                 .byDefault()
                 .register();
         mapperFactory.classMap(SongSolrDocument.class, SearchNodeDto.class)

@@ -1,7 +1,9 @@
 package com.robotnec.chords.web;
 
+import com.robotnec.chords.service.PerformerService;
 import com.robotnec.chords.service.SongService;
 import com.robotnec.chords.web.dto.FeaturedDto;
+import com.robotnec.chords.web.dto.PerformerDto;
 import com.robotnec.chords.web.dto.SongDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +25,15 @@ public class FeaturedController {
     SongService songService;
 
     @Autowired
+    PerformerService performerService;
+
+    @Autowired
     Mapper mapper;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<FeaturedDto> getFeatured() {
         List<SongDto> featuredSongs = mapper.mapAsList(songService.getRecentlyUpdatedSongs(20), SongDto.class);
-        return ResponseEntity.ok(new FeaturedDto(featuredSongs));
+        List<PerformerDto> allPerformers = mapper.mapAsList(performerService.getPerformers(), PerformerDto.class);
+        return ResponseEntity.ok(new FeaturedDto(featuredSongs, allPerformers));
     }
 }

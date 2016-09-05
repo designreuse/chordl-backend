@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.validation.constraints.Size;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author zak <zak@robotnec.com>
@@ -24,4 +23,6 @@ public class PerformerDto {
     private Date createdDate;
 
     private Date updatedDate;
+
+    private int songCount;
 }

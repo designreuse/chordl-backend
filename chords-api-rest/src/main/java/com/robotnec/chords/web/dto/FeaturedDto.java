@@ -12,4 +12,5 @@ import java.util.List;
 @ToString
 public class FeaturedDto {
     private List<SongDto> songs;
+    private List<PerformerDto> performers;
 }
