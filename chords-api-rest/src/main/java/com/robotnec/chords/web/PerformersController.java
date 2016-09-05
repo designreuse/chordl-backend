@@ -1,6 +1,7 @@
 package com.robotnec.chords.web;
 
 import com.robotnec.chords.config.access.AdminAccess;
+import com.robotnec.chords.exception.InvalidRequestException;
 import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Performer;
@@ -12,9 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,11 +48,9 @@ public class PerformersController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<PerformerDto> createPerformer(@RequestBody PerformerDto performerDto) {
-
-        // TODO use validation annotations
-        if (performerDto.getName() == null || performerDto.getName().isEmpty()) {
-            throw new IllegalArgumentException("Performer name is empty");
+    public ResponseEntity<PerformerDto> createPerformer(@Valid @RequestBody PerformerDto performerDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new InvalidRequestException(bindingResult);
         }
 
         return Optional.of(performerDto)
@@ -70,8 +70,20 @@ public class PerformersController {
                 .orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
+    // used in scripts
+    @AdminAccess
+    @Deprecated
     @RequestMapping(value = "/search/{name}", method = RequestMethod.GET)
     public ResponseEntity<PerformerDto> getPerformerByName(@PathVariable("name") final String name) {
+        return Optional.of(name)
+                .flatMap(v -> performerService.getPerformerByName(v))
+                .map(v -> mapper.map(v, PerformerDto.class))
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException(name));
+    }
+
+    @RequestMapping(value = "v2/search", method = RequestMethod.GET)
+    public ResponseEntity<PerformerDto> getPerformerByNameV2(@RequestParam final String name) {
         return Optional.of(name)
                 .flatMap(v -> performerService.getPerformerByName(v))
                 .map(v -> mapper.map(v, PerformerDto.class))
@@ -91,7 +103,11 @@ public class PerformersController {
     @AdminAccess
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<PerformerDto> updatePerformer(@PathVariable("id") final Long id,
-                                                        @RequestBody final PerformerDto songDto) {
+                                                        @Valid @RequestBody final PerformerDto songDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new InvalidRequestException(bindingResult);
+        }
+
         return Optional.of(songDto)
                 .map(v -> mapper.map(v, Performer.class))
                 .map(v -> setId(v, id))

@@ -2,6 +2,7 @@ package com.robotnec.chords.web.dto;
 
 import lombok.*;
 
+import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 public class PerformerDto {
     private long id;
 
+    @Size(min = 2, max = 60)
     private String name;
 
     private Date createdDate;
