@@ -50,7 +50,10 @@ public class Mapper {
                 .customize(new CustomMapper<Performer, PerformerDto>() {
                     @Override
                     public void mapAtoB(Performer a, PerformerDto b, MappingContext context) {
-                        b.setSongCount(a.getSongs().size());
+                        List<Song> songs = a.getSongs();
+                        if (songs != null) {
+                            b.setSongCount(songs.size());
+                        }
                     }
                 })
                 .byDefault()

@@ -41,6 +41,12 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String authHeader = httpRequest.getHeader(tokenHeader);
 
+        if (authHeader == null || authHeader.isEmpty()) {
+            log.debug("Anonymous authentication");
+            chain.doFilter(request, response);
+            return;
+        }
+
         try {
             boolean authenticated = isAlreadyAuthenticated() || validateAuthHeaderAndGetToken(authHeader)
                     .flatMap((token) -> jwtTokenService.validateToken(token))
