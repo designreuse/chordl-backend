@@ -9,7 +9,7 @@ import org.springframework.data.solr.repository.SolrCrudRepository;
 
 public interface SongSolrRepository extends SolrCrudRepository<SongSolrDocument, Long> {
 
-    @Highlight(prefix = "<[[", postfix = "]]>", fields = {"title", "lyrics", "performer"})
+    @Highlight(prefix = "<mark>", postfix = "</mark>", fields = {"title", "lyrics", "performer"})
     @Query(value = "catch_all:?0")
     SolrResultPage<SongSolrDocument> findByAllFields(String term, Pageable pageable);
 }
