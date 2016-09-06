@@ -7,6 +7,7 @@ import com.robotnec.chords.service.PerformerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class PerformerServiceImpl implements PerformerService {
     @Override
     public List<Performer> getPerformers() {
         List<Performer> performers = new ArrayList<>();
-        performerRepository.findAll().forEach(performers::add);
+        performerRepository.findAll(new Sort(Sort.Direction.ASC, "name")).forEach(performers::add);
         return performers;
     }
 
