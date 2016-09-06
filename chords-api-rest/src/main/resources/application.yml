@@ -14,8 +14,8 @@ spring:
   datasource:
     driverClassName: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/chords
-    username: chords_api
-    password: chords_api
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     properties:
       hibernate:
@@ -32,12 +32,12 @@ spring:
   social:
     facebook:
       app-id: 1086354088118124
-      app-secret: 4a3ec7f1dae4e2e3c49c44e8d3daf2cf
+      app-secret: ${FACEBOOK_APP_SECRET}
 
 jwt:
   header: Authorization
   scheme: Bearer
-  secret: 2aae6c35c94fcfb415dbe95f408b9ce91ee846ed
+  secret: ${JWT_SECRET}
   expiration: 60000
 
 flyway:
