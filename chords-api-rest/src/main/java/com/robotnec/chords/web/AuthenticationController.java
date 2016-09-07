@@ -1,6 +1,7 @@
 package com.robotnec.chords.web;
 
 import com.robotnec.chords.exception.InvalidRequestException;
+import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.user.ChordsUser;
 import com.robotnec.chords.service.FacebookService;
 import com.robotnec.chords.service.JwtTokenService;
@@ -53,6 +54,11 @@ public class AuthenticationController {
     public ResponseEntity authenticate(@Valid @RequestBody CredentialsDto credentialsDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new InvalidRequestException(bindingResult);
+        }
+
+        if (!credentialsDto.getScopes().contains("email")) {
+            // must contain email scope
+            throw new WrongArgumentException("FB must provide email scope");
         }
 
         return facebookService.validateFacebookUser(credentialsDto)

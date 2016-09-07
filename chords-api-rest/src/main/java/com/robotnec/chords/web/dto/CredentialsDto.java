@@ -3,6 +3,8 @@ package com.robotnec.chords.web.dto;
 import lombok.*;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import java.util.List;
+
 /**
  * @author zak <zak@robotnec.com>
  */
@@ -19,4 +21,7 @@ public class CredentialsDto {
 
     @NotEmpty
     private String socialToken;
+
+    @NotEmpty
+    private List<String> scopes;
 }
