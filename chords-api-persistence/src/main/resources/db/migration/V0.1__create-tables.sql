@@ -1,3 +1,5 @@
+SET NAMES 'utf8';
+
 DROP TABLE IF EXISTS `song`;
 DROP TABLE IF EXISTS `performer`;
 
