@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Optional;
 
 @Slf4j
@@ -31,15 +32,23 @@ public class FacebookServiceImpl implements FacebookService {
     public Optional<User> validateFacebookUser(CredentialsDto credentials) {
         log.debug("Check user token");
 
+        String applicationAccessToken = fetchApplicationAccessToken();
+
+        log.debug("Got app access token: {}", applicationAccessToken);
+
         UriComponentsBuilder builder =
                 UriComponentsBuilder.fromHttpUrl("https://graph.facebook.com/debug_token")
                         .queryParam("input_token", credentials.getSocialToken())
-                        .queryParam("access_token", fetchApplicationAccessToken());
+                        .queryParam("access_token", applicationAccessToken);
 
         RestTemplate restTemplate = new RestTemplate();
+        URI url = builder.build().encode().toUri();
+
+        log.debug("Send request to FB: {}", url);
+
         ResponseEntity<FacebookCheckTokenResponseDto> response =
                 restTemplate.getForEntity(
-                        builder.build().encode().toUri(),
+                        url,
                         FacebookCheckTokenResponseDto.class);
 
         FacebookCheckTokenResponseDto responseBody = response.getBody();
@@ -68,7 +77,6 @@ public class FacebookServiceImpl implements FacebookService {
 
 
     private String fetchApplicationAccessToken() {
-        OAuth2Operations oauth = new FacebookConnectionFactory(fbAppId, fbAppSecret).getOAuthOperations();
-        return oauth.authenticateClient().getAccessToken();
+        return fbAppId + "|" + fbAppSecret;
     }
 }
