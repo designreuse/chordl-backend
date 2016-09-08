@@ -3,6 +3,7 @@ package com.robotnec.chords.web.dto;
 import lombok.*;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
@@ -19,9 +20,11 @@ public class SongDto {
     private long id;
 
     @Size(min = 2, max = 60)
+    @Pattern(regexp = "^[^\\\\/<>\\^`{}]+$")
     private String title;
 
     @Size(min = 2)
+    @Pattern(regexp = "^[^\\\\/<>\\^`{}]+$")
     private String lyrics;
 
     private Date createdDate;
@@ -31,5 +34,6 @@ public class SongDto {
     @Min(0)
     private long performerId;
 
+    @Pattern(regexp = "^[^\\\\/<>\\^`{}]+$")
     private String performerName;
 }

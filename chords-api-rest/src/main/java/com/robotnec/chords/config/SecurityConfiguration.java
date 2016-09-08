@@ -37,8 +37,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                             "/configuration/security",
                             "/swagger-ui.html",
                             "/webjars/**").hasRole("ADMIN")
-//                            "/webjars/**").permitAll()
                 .anyRequest().authenticated()
+//                .anyRequest().anonymous()
                     .and()
                 .exceptionHandling()
                     .authenticationEntryPoint(unauthorizedHandler)

@@ -2,6 +2,7 @@ package com.robotnec.chords.web.dto;
 
 import lombok.*;
 
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
@@ -18,6 +19,7 @@ public class PerformerDto {
     private long id;
 
     @Size(min = 2, max = 60)
+    @Pattern(regexp = "^[^\\\\/<>\\^`{}]+$")
     private String name;
 
     private Date createdDate;
