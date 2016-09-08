@@ -9,8 +9,8 @@ import com.robotnec.chords.web.dto.SongDto;
 import difflib.DiffUtils;
 import difflib.Patch;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,14 +40,13 @@ public class DiffServiceImpl implements DiffService {
         return songDto;
     }
 
-    @Transactional
     @Override
     public Song undo(Long id) {
-        String diff = diffRepository.findBySongId(id).getDiff();
+        List<Diff> diffList = diffRepository.findBySongId(id, new Sort(Sort.Direction.DESC, "timestamp"));
 
         Song song = songService.getSong(id).get();
 
-        song.setLyrics(unPatch(song.getLyrics(), diff));
+        song.setLyrics(unPatch(song.getLyrics(), diffList.get(0).getDiff()));
 
         songService.updateSong(song);
 

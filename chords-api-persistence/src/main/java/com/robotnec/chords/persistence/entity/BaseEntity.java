@@ -14,11 +14,9 @@ import java.util.Date;
 public abstract class BaseEntity {
 
     @DateTimeFormat(style = "M-")
-    @Column(name = "created_date")
     private Date createdDate = new Date();
 
     @DateTimeFormat(style = "M-") // TODO @CreatedDate
-    @Column(name = "updated_date")
     private Date updatedDate = new Date();
 
     @PrePersist

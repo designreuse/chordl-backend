@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS `diff`;
 CREATE TABLE `diff` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `diff` TEXT NOT NULL,
-  `song_id`INT(11) NOT NULL UNIQUE,
+  `song_id` INT(11) NOT NULL,
+  `timestamp` DATETIME NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
