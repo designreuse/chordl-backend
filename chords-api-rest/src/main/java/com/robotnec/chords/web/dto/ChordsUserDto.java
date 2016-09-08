@@ -15,10 +15,6 @@ import java.util.List;
 @ToString
 public class ChordsUserDto {
     private Long id;
-    private String email;
     private String name;
-    private String facebookUserId;
-    private String facebookLink;
-    private boolean hasFavorites;
     private List<String> authorities;
 }

@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ChordsUser save(ChordsUser user) {
         // TODO handle better
-        if (user.getFacebookUserId().equals("10210108552656409")) {
+        if (user.getEmail().equals("zapylaev@gmail.com")) {
             user.setRoles(roleService.getAdminRoles());
         } else {
             user.setRoles(roleService.getUserRoles());
