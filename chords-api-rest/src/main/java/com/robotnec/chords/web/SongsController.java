@@ -5,12 +5,13 @@ import com.robotnec.chords.exception.InvalidRequestException;
 import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Song;
+import com.robotnec.chords.service.DiffService;
 import com.robotnec.chords.service.SongService;
 import com.robotnec.chords.web.dto.SongDto;
 import com.robotnec.chords.web.mapping.Mapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,12 +19,16 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/songs", produces = "application/json;charset=UTF-8")
 public class SongsController {
 
     @Autowired
     private SongService songService;
+
+    @Autowired
+    private DiffService diffService;
 
     @Autowired
     private Mapper mapper;
@@ -72,6 +77,11 @@ public class SongsController {
                 .orElseThrow(IllegalStateException::new);
     }
 
+    @RequestMapping(value = "undo/{id}", method = RequestMethod.GET)
+    public ResponseEntity undo(@PathVariable("id") final Long id) {
+        return ResponseEntity.ok(mapper.map(diffService.undo(id), SongDto.class));
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<SongDto> updateSong(@PathVariable("id") final Long id,
                                               @Valid @RequestBody final SongDto songDto, BindingResult bindingResult) {
@@ -80,6 +90,7 @@ public class SongsController {
         }
 
         return Optional.of(songDto)
+                .map(diffService::createDiff)
                 .map(v -> mapper.map(v, Song.class))
                 .map(v -> setId(v, id))
                 .map(songService::updateSong)

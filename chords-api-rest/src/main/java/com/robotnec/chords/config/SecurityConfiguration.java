@@ -31,14 +31,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers("/auth/signin", "/search/**", "/featured/**").permitAll()
                     .antMatchers(HttpMethod.GET, "/songs/**", "/performers/**").permitAll()
-                    .antMatchers("/v2/api-docs",
-                            "/configuration/ui",
-                            "/swagger-resources",
-                            "/configuration/security",
-                            "/swagger-ui.html",
-                            "/webjars/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-//                .anyRequest().anonymous()
+//                    .antMatchers("/v2/api-docs",
+//                            "/configuration/ui",
+//                            "/swagger-resources",
+//                            "/configuration/security",
+//                            "/swagger-ui.html",
+//                            "/webjars/**").hasRole("ADMIN")
+//                .anyRequest().authenticated()
+                .anyRequest().anonymous()
                     .and()
                 .exceptionHandling()
                     .authenticationEntryPoint(unauthorizedHandler)
