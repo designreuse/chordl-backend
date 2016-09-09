@@ -1,6 +1,9 @@
 package com.robotnec.chords.persistence.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -11,7 +14,10 @@ import java.util.Date;
  * @author zak <zak@robotnec.com>
  */
 @Data
+@Builder
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "diff")
 public class Diff {
 

@@ -1,13 +1,17 @@
 package com.robotnec.chords.service;
 
+import com.robotnec.chords.persistence.entity.Diff;
 import com.robotnec.chords.persistence.entity.Song;
-import com.robotnec.chords.web.dto.SongDto;
+
+import java.util.List;
 
 /**
  * @author zak <zak@robotnec.com>
  */
 public interface DiffService {
-    SongDto createDiff(SongDto songDto);
+    Song createDiff(Song song);
 
-    Song undo(Long id);
+    List<Diff> getDiffs(Long id);
+
+    Song undo(Long diffId, Song song);
 }

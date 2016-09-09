@@ -1,25 +1,28 @@
 package com.robotnec.chords.service.impl;
 
+import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.persistence.entity.Diff;
 import com.robotnec.chords.persistence.entity.Song;
 import com.robotnec.chords.persistence.repository.DiffRepository;
 import com.robotnec.chords.service.DiffService;
 import com.robotnec.chords.service.SongService;
-import com.robotnec.chords.web.dto.SongDto;
+import com.robotnec.chords.util.ListUtil;
 import difflib.DiffUtils;
 import difflib.Patch;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * @author zak <zak@robotnec.com>
  */
+@Slf4j
 @Service
 public class DiffServiceImpl implements DiffService {
 
@@ -29,48 +32,69 @@ public class DiffServiceImpl implements DiffService {
     @Autowired
     private SongService songService;
 
+    @Transactional
     @Override
-    public SongDto createDiff(SongDto songDto) {
-        Optional<Song> songOptional = songService.getSong(songDto.getId());
-
-        Diff diff = new Diff();
-        diff.setSongId(songDto.getId());
-        diff.setDiff(getDiff(songDto, songOptional.get()));
-        diffRepository.save(diff);
-        return songDto;
+    public Song createDiff(Song newVersion) {
+        Long songId = newVersion.getId();
+        return songService.getSong(songId)
+                .map(oldVersion -> createDiff(newVersion, oldVersion))
+                .map(diff -> Diff.builder().diff(diff).songId(newVersion.getId()).build())
+                .map(diffRepository::save)
+                .map(done -> newVersion)
+                .orElseThrow(() -> new ResourceNotFoundException(songId));
     }
 
     @Override
-    public Song undo(Long id) {
-        List<Diff> diffList = diffRepository.findBySongId(id, new Sort(Sort.Direction.DESC, "timestamp"));
-
-        Song song = songService.getSong(id).get();
-
-        song.setLyrics(unPatch(song.getLyrics(), diffList.get(0).getDiff()));
-
-        songService.updateSong(song);
-
-        return song;
+    public List<Diff> getDiffs(Long id) {
+        return diffRepository.findBySongId(id, byTimestamp());
     }
 
-    private String unPatch(String text, String diff) {
+    @Transactional
+    @Override
+    public Song undo(Long diffId, Song song) {
+        List<Diff> diffsAll = diffRepository.findBySongId(song.getId(), byTimestamp());
+
+        if (containsDiff(diffsAll, diffId)) {
+
+            List<Diff> diffsToApply =
+                    ListUtil.greedyTakeWhile(diffsAll, diff -> !diff.getId().equals(diffId));
+
+            diffsToApply.forEach(diff -> song.setLyrics(unPatchText(song.getLyrics(), diff.getDiff())));
+
+            diffRepository.delete(diffsToApply);
+
+            return song;
+        } else {
+            throw new ResourceNotFoundException("diff", diffId);
+        }
+    }
+
+    private boolean containsDiff(List<Diff> diffsAll, Long diffId) {
+        return diffsAll.stream().anyMatch(diff -> diff.getId().equals(diffId));
+    }
+
+    private String unPatchText(String text, String diff) {
         Patch patch = DiffUtils.parseUnifiedDiff(Arrays.asList(diff.split("\n")));
         List<String> list = (List<String>) DiffUtils.unpatch(Arrays.asList(text.split("\n")), patch);
         return list.stream().collect(Collectors.joining("\n"));
     }
 
-    private String getDiff(SongDto songDto, Song song) {
-        List<String> original = Arrays.asList(song.getLyrics().split("\n"));
-        List<String> revised  = Arrays.asList(songDto.getLyrics().split("\n"));
+    private String createDiff(Song newVersion, Song oldVersion) {
+        List<String> original = Arrays.asList(oldVersion.getLyrics().split("\n"));
+        List<String> revised  = Arrays.asList(newVersion.getLyrics().split("\n"));
 
         Patch patch = DiffUtils.diff(original, revised);
         return DiffUtils.generateUnifiedDiff(
-                song.getTitle(),
-                song.getTitle(),
+                String.format("a %s", oldVersion.getTitle()),
+                String.format("b %s", oldVersion.getTitle()),
                 original,
                 patch,
-                song.getLyrics().length())
+                oldVersion.getLyrics().length())
                 .stream()
                 .collect(Collectors.joining("\n"));
+    }
+
+    private Sort byTimestamp() {
+        return new Sort(Sort.Direction.DESC, "timestamp");
     }
 }

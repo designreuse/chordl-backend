@@ -77,11 +77,6 @@ public class SongsController {
                 .orElseThrow(IllegalStateException::new);
     }
 
-    @RequestMapping(value = "undo/{id}", method = RequestMethod.GET)
-    public ResponseEntity undo(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(mapper.map(diffService.undo(id), SongDto.class));
-    }
-
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<SongDto> updateSong(@PathVariable("id") final Long id,
                                               @Valid @RequestBody final SongDto songDto, BindingResult bindingResult) {
@@ -90,9 +85,9 @@ public class SongsController {
         }
 
         return Optional.of(songDto)
-                .map(diffService::createDiff)
                 .map(v -> mapper.map(v, Song.class))
                 .map(v -> setId(v, id))
+                .map(diffService::createDiff)
                 .map(songService::updateSong)
                 .map(v -> mapper.map(v, SongDto.class))
                 .map(ResponseEntity::ok)
