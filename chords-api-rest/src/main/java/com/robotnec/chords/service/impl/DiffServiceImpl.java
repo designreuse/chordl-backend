@@ -80,7 +80,7 @@ public class DiffServiceImpl implements DiffService {
                 "revised",
                 originalLines,
                 patch,
-                originalLines.size())
+                0)
                 .stream()
                 .collect(Collectors.joining("\n"));
     }
