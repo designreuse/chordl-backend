@@ -39,7 +39,10 @@ public class DiffServiceImpl implements DiffService {
                 .diff(diffText)
                 .relativeEntityId(revised.getId())
                 .build();
-        diffRepository.save(diff);
+
+        if (!diff.getDiff().isEmpty()) {
+            diffRepository.save(diff);
+        }
         return revised;
     }
 
