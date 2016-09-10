@@ -33,6 +33,7 @@ public class DiffController {
                                         @RequestParam("songId") final Long songId) {
         return songService.getSong(songId)
                 .map(song -> diffService.undo(diffId, song))
+                .map(songService::updateSong)
                 .map(song -> mapper.map(song, SongDto.class))
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResourceNotFoundException("song", songId));

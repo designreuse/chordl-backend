@@ -1,7 +1,6 @@
 package com.robotnec.chords.persistence.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -9,10 +8,17 @@ import javax.persistence.*;
  * @author zak <zak@robotnec.com>
  */
 @EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "song")
 public class Song extends BaseEntity {
+
+    private static final int TITLE = 0;
+    private static final int BODY = 1;
 
     @Id
     @GeneratedValue

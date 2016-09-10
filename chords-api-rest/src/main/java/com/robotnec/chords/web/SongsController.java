@@ -5,7 +5,6 @@ import com.robotnec.chords.exception.InvalidRequestException;
 import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Song;
-import com.robotnec.chords.service.DiffService;
 import com.robotnec.chords.service.SongService;
 import com.robotnec.chords.web.dto.SongDto;
 import com.robotnec.chords.web.mapping.Mapper;
@@ -28,12 +27,9 @@ public class SongsController {
     private SongService songService;
 
     @Autowired
-    private DiffService diffService;
-
-    @Autowired
     private Mapper mapper;
 
-    @AdminAccess
+//    @AdminAccess
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<SongDto>> getSongs() {
         return ResponseEntity.ok(mapper.mapAsList(songService.getSongs(), SongDto.class));
@@ -86,8 +82,6 @@ public class SongsController {
 
         return Optional.of(songDto)
                 .map(v -> mapper.map(v, Song.class))
-                .map(v -> setId(v, id))
-                .map(diffService::createDiff)
                 .map(songService::updateSong)
                 .map(v -> mapper.map(v, SongDto.class))
                 .map(ResponseEntity::ok)
@@ -101,10 +95,5 @@ public class SongsController {
                 .map(v -> mapper.map(v, SongDto.class))
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", id)));
-    }
-
-    private Song setId(Song song, Long id) {
-        song.setId(id);
-        return song;
     }
 }

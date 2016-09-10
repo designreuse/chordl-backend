@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -25,7 +24,7 @@ public class Diff {
     @GeneratedValue
     private Long id;
     private String diff;
-    private Long songId;
+    private Long relativeEntityId;
 
     @DateTimeFormat(style = "M-")
     private Date timestamp;

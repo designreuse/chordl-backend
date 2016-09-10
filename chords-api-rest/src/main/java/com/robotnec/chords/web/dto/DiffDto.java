@@ -16,6 +16,6 @@ import java.util.Date;
 public class DiffDto {
     private Long id;
     private String diff;
-    private Long songId;
+    private Long relativeEntityId;
     private Date timestamp;
 }

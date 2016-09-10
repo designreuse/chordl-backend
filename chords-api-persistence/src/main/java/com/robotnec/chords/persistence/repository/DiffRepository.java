@@ -10,5 +10,5 @@ import java.util.List;
  * @author zak <zak@robotnec.com>
  */
 public interface DiffRepository extends PagingAndSortingRepository<Diff, Long> {
-    List<Diff> findBySongId(Long songId, Sort sort);
+    List<Diff> findByRelativeEntityId(Long relativeEntityId, Sort sort);
 }
