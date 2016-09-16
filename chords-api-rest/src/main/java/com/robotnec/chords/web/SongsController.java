@@ -5,6 +5,7 @@ import com.robotnec.chords.exception.InvalidRequestException;
 import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Song;
+import com.robotnec.chords.service.HistoryService;
 import com.robotnec.chords.service.SongService;
 import com.robotnec.chords.web.dto.SongDto;
 import com.robotnec.chords.web.mapping.Mapper;
@@ -27,16 +28,19 @@ public class SongsController {
     private SongService songService;
 
     @Autowired
+    private HistoryService historyService;
+
+    @Autowired
     private Mapper mapper;
 
-//    @AdminAccess
+    @AdminAccess
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<SongDto>> getSongs() {
         return ResponseEntity.ok(mapper.mapAsList(songService.getSongs(), SongDto.class));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<SongDto> getSong(@PathVariable("id") final Long id) {
+    public ResponseEntity<SongDto> getSong(@PathVariable("id") Long id) {
         return Optional.of(id)
                 .flatMap(v -> songService.getSong(v))
                 .map(v -> mapper.map(v, SongDto.class))
@@ -59,14 +63,14 @@ public class SongsController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<SongDto> updateSong(@PathVariable("id") final Long id,
-                                              @Valid @RequestBody final SongDto songDto, BindingResult bindingResult) {
+    public ResponseEntity<SongDto> updateSong(@Valid @RequestBody SongDto songDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new InvalidRequestException(bindingResult);
         }
 
         return Optional.of(songDto)
                 .map(v -> mapper.map(v, Song.class))
+                .map(historyService::createHistory)
                 .map(songService::updateSong)
                 .map(v -> mapper.map(v, SongDto.class))
                 .map(ResponseEntity::ok)
@@ -89,7 +93,7 @@ public class SongsController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<SongDto> deleteSong(@PathVariable("id") final Long id) {
+    public ResponseEntity<SongDto> deleteSong(@PathVariable("id") Long id) {
         return Optional.of(id)
                 .map(songService::deleteSong)
                 .map(v -> mapper.map(v, SongDto.class))

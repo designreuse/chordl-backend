@@ -115,9 +115,9 @@ public class DiffMatchPatch {
 
 
   /**
-   * The data structure representing a diff is a Linked list of Diff objects:
-   * {Diff(Operation.DELETE, "Hello"), Diff(Operation.INSERT, "Goodbye"),
-   *  Diff(Operation.EQUAL, " world.")}
+   * The data structure representing a diff is a Linked list of History objects:
+   * {History(Operation.DELETE, "Hello"), History(Operation.INSERT, "Goodbye"),
+   *  History(Operation.EQUAL, " world.")}
    * which means: delete "Hello", add "Goodbye" and keep " world."
    */
   public enum Operation {
@@ -128,14 +128,14 @@ public class DiffMatchPatch {
   /**
    * Find the differences between two texts.
    * Run a faster slightly less optimal diff
-   * This method allows the 'checklines' of diff_main() to be optional.
+   * This method allows the 'checklines' of diffMain() to be optional.
    * Most of the time checklines is wanted, so default to true.
    * @param text1 Old string to be diffed.
    * @param text2 New string to be diffed.
-   * @return Linked List of Diff objects.
+   * @return Linked List of History objects.
    */
-  public LinkedList<Diff> diff_main(String text1, String text2) {
-    return diff_main(text1, text2, true);
+  public LinkedList<Diff> diffMain(String text1, String text2) {
+    return diffMain(text1, text2, true);
   }
 
   /**
@@ -146,10 +146,10 @@ public class DiffMatchPatch {
    * @param checklines Speedup flag.  If false, then don't run a
    *     line-level diff first to identify the changed areas.
    *     If true, then run a faster slightly less optimal diff
-   * @return Linked List of Diff objects.
+   * @return Linked List of History objects.
    */
-  public LinkedList<Diff> diff_main(String text1, String text2,
-                                    boolean checklines) {
+  public LinkedList<Diff> diffMain(String text1, String text2,
+                                   boolean checklines) {
     // Check for equality (speedup)
     LinkedList<Diff> diffs;
     if (text1.equals(text2)) {
@@ -194,7 +194,7 @@ public class DiffMatchPatch {
    * @param checklines Speedup flag.  If false, then don't run a
    *     line-level diff first to identify the changed areas.
    *     If true, then run a faster slightly less optimal diff
-   * @return Linked List of Diff objects.
+   * @return Linked List of History objects.
    */
   protected LinkedList<Diff> diff_compute(String text1, String text2,
                                           boolean checklines) {
@@ -236,8 +236,8 @@ public class DiffMatchPatch {
       String text2_b = hm[3];
       String mid_common = hm[4];
       // Send both pairs off for separate processing.
-      LinkedList<Diff> diffs_a = diff_main(text1_a, text2_a, checklines);
-      LinkedList<Diff> diffs_b = diff_main(text1_b, text2_b, checklines);
+      LinkedList<Diff> diffs_a = diffMain(text1_a, text2_a, checklines);
+      LinkedList<Diff> diffs_b = diffMain(text1_b, text2_b, checklines);
       // Merge the results.
       diffs = diffs_a;
       diffs.add(new Diff(Operation.EQUAL, mid_common));
@@ -300,7 +300,7 @@ public class DiffMatchPatch {
               pointer.previous();
               pointer.remove();
             }
-            for (Diff newDiff : diff_main(text_delete, text_insert, false)) {
+            for (Diff newDiff : diffMain(text_delete, text_insert, false)) {
               pointer.add(newDiff);
             }
           }
@@ -383,7 +383,7 @@ public class DiffMatchPatch {
   /**
    * Rehydrate the text in a diff from a string of line hashes to real lines of
    * text.
-   * @param diffs LinkedList of Diff objects.
+   * @param diffs LinkedList of History objects.
    * @param lineArray List of unique strings.
    */
   protected void diff_charsToLines(LinkedList<Diff> diffs,
@@ -403,7 +403,7 @@ public class DiffMatchPatch {
    * Explore the intersection points between the two texts.
    * @param text1 Old string to be diffed.
    * @param text2 New string to be diffed.
-   * @return LinkedList of Diff objects or null if no diff available.
+   * @return LinkedList of History objects or null if no diff available.
    */
   protected LinkedList<Diff> diff_map(String text1, String text2) {
     long ms_end = System.currentTimeMillis() + (long) (Diff_Timeout * 1000);
@@ -533,7 +533,7 @@ public class DiffMatchPatch {
    * @param v_map List of path sets.
    * @param text1 Old string fragment to be diffed.
    * @param text2 New string fragment to be diffed.
-   * @return LinkedList of Diff objects.
+   * @return LinkedList of History objects.
    */
   protected LinkedList<Diff> diff_path1(List<Set<Long>> v_map,
                                         String text1, String text2) {
@@ -586,7 +586,7 @@ public class DiffMatchPatch {
    * @param v_map List of path sets.
    * @param text1 Old string fragment to be diffed.
    * @param text2 New string fragment to be diffed.
-   * @return LinkedList of Diff objects.
+   * @return LinkedList of History objects.
    */
   protected LinkedList<Diff> diff_path2(List<Set<Long>> v_map,
                                         String text1, String text2) {
@@ -777,7 +777,7 @@ public class DiffMatchPatch {
 
   /**
    * Reduce the number of edits by eliminating semantically trivial equalities.
-   * @param diffs LinkedList of Diff objects.
+   * @param diffs LinkedList of History objects.
    */
   public void diff_cleanupSemantic(LinkedList<Diff> diffs) {
     if (diffs.isEmpty()) {
@@ -854,7 +854,7 @@ public class DiffMatchPatch {
    * Look for single edits surrounded on both sides by equalities
    * which can be shifted sideways to align the edit to a word boundary.
    * e.g: The c<ins>at c</ins>ame. -> The <ins>cat </ins>came.
-   * @param diffs LinkedList of Diff objects.
+   * @param diffs LinkedList of History objects.
    */
   public void diff_cleanupSemanticLossless(LinkedList<Diff> diffs) {
     String equality1, edit, equality2;
@@ -988,7 +988,7 @@ public class DiffMatchPatch {
 
   /**
    * Reduce the number of edits by eliminating operationally trivial equalities.
-   * @param diffs LinkedList of Diff objects.
+   * @param diffs LinkedList of History objects.
    */
   public void diff_cleanupEfficiency(LinkedList<Diff> diffs) {
     if (diffs.isEmpty()) {
@@ -1007,7 +1007,7 @@ public class DiffMatchPatch {
     // Is there a deletion operation after the last equality.
     boolean post_del = false;
     Diff thisDiff = pointer.next();
-    Diff safeDiff = thisDiff;  // The last Diff that is known to be unsplitable.
+    Diff safeDiff = thisDiff;  // The last History that is known to be unsplitable.
     while (thisDiff != null) {
       if (thisDiff.operation == Operation.EQUAL) {
         // equality found
@@ -1097,7 +1097,7 @@ public class DiffMatchPatch {
   /**
    * Reorder and merge like edit sections.  Merge equalities.
    * Any edit section can move as long as it doesn't cross an equality.
-   * @param diffs LinkedList of Diff objects.
+   * @param diffs LinkedList of History objects.
    */
   public void diff_cleanupMerge(LinkedList<Diff> diffs) {
     diffs.add(new Diff(Operation.EQUAL, ""));  // Add a dummy entry at the end.
@@ -1249,7 +1249,7 @@ public class DiffMatchPatch {
    * loc is a location in text1, compute and return the equivalent location in
    * text2.
    * e.g. "The cat" vs "The big cat", 1->1, 5->8
-   * @param diffs LinkedList of Diff objects.
+   * @param diffs LinkedList of History objects.
    * @param loc Location within text1.
    * @return Location within text2.
    */
@@ -1286,16 +1286,16 @@ public class DiffMatchPatch {
 
 
   /**
-   * Convert a Diff list into a pretty HTML report.
-   * @param diffs LinkedList of Diff objects.
+   * Convert a History list into a pretty HTML report.
+   * @param diffs LinkedList of History objects.
    * @return HTML representation.
    */
-  public String diff_prettyHtml(LinkedList<Diff> diffs) {
+  public String diffPrettyHtml(LinkedList<Diff> diffs) {
     StringBuilder html = new StringBuilder();
     int i = 0;
     for (Diff aDiff : diffs) {
       String text = aDiff.text.replace("&", "&amp;").replace("<", "&lt;")
-          .replace(">", "&gt;").replace("\n", "&para;<BR>");
+          .replace(">", "&gt;").replace("\n", "<BR>");
       switch (aDiff.operation) {
       case INSERT:
         html.append("<INS STYLE=\"background:#E6FFE6;\" TITLE=\"i=").append(i)
@@ -1320,7 +1320,7 @@ public class DiffMatchPatch {
 
   /**
    * Compute and return the source text (all equalities and deletions).
-   * @param diffs LinkedList of Diff objects.
+   * @param diffs LinkedList of History objects.
    * @return Source text.
    */
   public String diff_text1(LinkedList<Diff> diffs) {
@@ -1336,7 +1336,7 @@ public class DiffMatchPatch {
 
   /**
    * Compute and return the destination text (all equalities and insertions).
-   * @param diffs LinkedList of Diff objects.
+   * @param diffs LinkedList of History objects.
    * @return Destination text.
    */
   public String diff_text2(LinkedList<Diff> diffs) {
@@ -1353,7 +1353,7 @@ public class DiffMatchPatch {
   /**
    * Compute the Levenshtein distance; the number of inserted, deleted or
    * substituted characters.
-   * @param diffs LinkedList of Diff objects.
+   * @param diffs LinkedList of History objects.
    * @return Number of changes.
    */
   public int diff_levenshtein(LinkedList<Diff> diffs) {
@@ -1730,7 +1730,7 @@ public class DiffMatchPatch {
    */
   public LinkedList<Patch> patch_make(String text1, String text2) {
     // No diffs provided, compute our own.
-    LinkedList<Diff> diffs = diff_main(text1, text2, true);
+    LinkedList<Diff> diffs = diffMain(text1, text2, true);
     if (diffs.size() > 2) {
       diff_cleanupSemantic(diffs);
       diff_cleanupEfficiency(diffs);
@@ -1759,7 +1759,7 @@ public class DiffMatchPatch {
    * @param text2 Ignored.
    * @param diffs Array of diff tuples for text1 to text2.
    * @return LinkedList of Patch objects.
-   * @deprecated Prefer patch_make(String text1, LinkedList<Diff> diffs).
+   * @deprecated Prefer patch_make(String text1, LinkedList<History> diffs).
    */
   public LinkedList<Patch> patch_make(String text1, String text2,
       LinkedList<Diff> diffs) {
@@ -1947,7 +1947,7 @@ public class DiffMatchPatch {
         } else {
           // Imperfect match.  Run a diff to get a framework of equivalent
           // indices.
-          LinkedList<Diff> diffs = diff_main(text1, text2, false);
+          LinkedList<Diff> diffs = diffMain(text1, text2, false);
           if (text1.length() > this.Match_MaxBits
               && diff_levenshtein(diffs) / (float) text1.length()
               > this.Patch_DeleteThreshold) {
@@ -2289,18 +2289,18 @@ public class DiffMatchPatch {
 
 
     /**
-     * Display a human-readable version of this Diff.
+     * Display a human-readable version of this History.
      * @return text version.
      */
     public String toString() {
       String prettyText = this.text.replace('\n', '\u00b6');
-      return "Diff(" + this.operation + ",\"" + prettyText + "\")";
+      return "History(" + this.operation + ",\"" + prettyText + "\")";
     }
 
 
     /**
-     * Is this Diff equivalent to another Diff?
-     * @param d Another Diff to compare against.
+     * Is this History equivalent to another History?
+     * @param d Another History to compare against.
      * @return true or false.
      */
     public boolean equals(Object d) {

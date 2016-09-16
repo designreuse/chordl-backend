@@ -13,9 +13,6 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @ToString
-public class DiffDto {
-    private Long id;
+public class PrettyDiffDto {
     private String diff;
-    private Long relativeEntityId;
-    private Date timestamp;
 }

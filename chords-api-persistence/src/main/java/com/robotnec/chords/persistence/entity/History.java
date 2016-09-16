@@ -17,13 +17,14 @@ import java.util.Date;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "diff")
-public class Diff {
+@Table(name = "history")
+public class History {
 
     @Id
     @GeneratedValue
     private Long id;
-    private String diff;
+    private String textTitle;
+    private String textBody;
     private Long relativeEntityId;
 
     @DateTimeFormat(style = "M-")

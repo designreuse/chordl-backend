@@ -1,10 +1,11 @@
 SET NAMES 'utf8';
 
-DROP TABLE IF EXISTS `diff`;
+DROP TABLE IF EXISTS `history`;
 
-CREATE TABLE `diff` (
+CREATE TABLE `history` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `diff` TEXT NOT NULL,
+  `text_title` TEXT NOT NULL,
+  `text_body` TEXT NOT NULL,
   `relative_entity_id` INT(11) NOT NULL,
   `timestamp` DATETIME NOT NULL,
   PRIMARY KEY (`id`)

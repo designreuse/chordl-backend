@@ -7,7 +7,6 @@ import com.robotnec.chords.persistence.entity.SongSolrDocument;
 import com.robotnec.chords.persistence.repository.PerformerRepository;
 import com.robotnec.chords.persistence.repository.SongRepository;
 import com.robotnec.chords.persistence.repository.SongSolrRepository;
-import com.robotnec.chords.service.DiffService;
 import com.robotnec.chords.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,9 +32,6 @@ public class SongServiceImpl implements SongService {
 
     @Autowired
     private PerformerRepository performerRepository;
-
-    @Autowired
-    private DiffService diffService;
 
     @Override
     public Optional<Song> getSong(long id) {
@@ -96,12 +92,8 @@ public class SongServiceImpl implements SongService {
         return StreamSupport.stream(createdSongs.spliterator(), false).collect(Collectors.toList());
     }
 
-    @Transactional
     @Override
     public Song updateSong(Song song) {
-
-        diffService.createDiff(getSong(song.getId()).get(), song);
-
         return createSong(song);
     }
 
