@@ -58,21 +58,6 @@ public class SongsController {
                 .orElseThrow(IllegalStateException::new);
     }
 
-    @AdminAccess
-    @RequestMapping(value = "/batch", method = RequestMethod.POST)
-    public ResponseEntity<List<SongDto>> createSongs(@Valid @RequestBody List<SongDto> songDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new InvalidRequestException(bindingResult);
-        }
-
-        return Optional.of(songDto)
-                .map(v -> mapper.mapAsList(v, Song.class))
-                .map(songService::createSongs)
-                .map(v -> mapper.mapAsList(v, SongDto.class))
-                .map(ResponseEntity::ok)
-                .orElseThrow(IllegalStateException::new);
-    }
-
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<SongDto> updateSong(@PathVariable("id") final Long id,
                                               @Valid @RequestBody final SongDto songDto, BindingResult bindingResult) {
@@ -84,6 +69,21 @@ public class SongsController {
                 .map(v -> mapper.map(v, Song.class))
                 .map(songService::updateSong)
                 .map(v -> mapper.map(v, SongDto.class))
+                .map(ResponseEntity::ok)
+                .orElseThrow(IllegalStateException::new);
+    }
+
+    @AdminAccess
+    @RequestMapping(value = "/batch", method = RequestMethod.POST)
+    public ResponseEntity<List<SongDto>> createSongs(@Valid @RequestBody List<SongDto> songDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new InvalidRequestException(bindingResult);
+        }
+
+        return Optional.of(songDto)
+                .map(v -> mapper.mapAsList(v, Song.class))
+                .map(songService::createSongs)
+                .map(v -> mapper.mapAsList(v, SongDto.class))
                 .map(ResponseEntity::ok)
                 .orElseThrow(IllegalStateException::new);
     }

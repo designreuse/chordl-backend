@@ -14,4 +14,6 @@ public interface DiffService {
     List<Diff> getDiffs(Long id);
 
     Song undo(Long diffId, Song versionControllable);
+
+    String getDiffPretty(Long diffId, Song song);
 }

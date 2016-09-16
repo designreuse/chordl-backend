@@ -43,4 +43,12 @@ public class DiffController {
     public ResponseEntity<List<DiffDto>> getDiffs(@PathVariable("songId") final Long songId) {
         return ResponseEntity.ok(mapper.mapAsList(diffService.getDiffs(songId), DiffDto.class));
     }
+
+    @RequestMapping(value = "/pretty", method = RequestMethod.GET)
+    public ResponseEntity<DiffDto> getDiffs(@RequestParam("diffId") final Long diffId,
+                                            @RequestParam("songId") final Long songId) {
+        DiffDto diffDto = DiffDto.builder()
+                .diff(diffService.getDiffPretty(diffId, songService.getSong(songId).get())).build();
+        return ResponseEntity.ok(diffDto);
+    }
 }

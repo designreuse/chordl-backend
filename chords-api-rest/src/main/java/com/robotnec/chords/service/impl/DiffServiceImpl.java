@@ -1,25 +1,22 @@
 package com.robotnec.chords.service.impl;
 
-import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.persistence.entity.Diff;
 import com.robotnec.chords.persistence.entity.Song;
 import com.robotnec.chords.persistence.repository.DiffRepository;
+import com.robotnec.chords.persistence.repository.SongRepository;
 import com.robotnec.chords.service.DiffService;
-import com.robotnec.chords.util.DiffUtil;
-import com.robotnec.chords.util.ListUtil;
-import difflib.DiffUtils;
-import difflib.Patch;
+import com.robotnec.chords.service.SongService;
+import com.robotnec.chords.util.DiffMatchPatch;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-import java.util.stream.Collectors;
 
 /**
  * @author zak <zak@robotnec.com>
@@ -31,13 +28,20 @@ public class DiffServiceImpl implements DiffService {
     @Autowired
     private DiffRepository diffRepository;
 
+    @Autowired
+    private SongRepository songRepository;
+
     @Transactional
     @Override
     public Song createDiff(Song original, Song revised) {
-        String diffText = createDiffText(revised, original);
+        if (original.equals(revised)) {
+            return revised;
+        }
+
+        String diffText = createDiffText(original);
         Diff diff = Diff.builder()
                 .diff(diffText)
-                .relativeEntityId(revised.getId())
+                .relativeEntityId(original.getId())
                 .build();
 
         if (!diff.getDiff().isEmpty()) {
@@ -46,56 +50,48 @@ public class DiffServiceImpl implements DiffService {
         return revised;
     }
 
-    @Override
-    public List<Diff> getDiffs(Long id) {
-        return diffRepository.findByRelativeEntityId(id, byTimestampDesc());
-    }
-
     @Transactional(readOnly = true)
     @Override
+    public List<Diff> getDiffs(Long id) {
+        Song song = songRepository.findOne(id);
+        List<Diff> diffs = diffRepository.findByRelativeEntityId(id, byTimestampDesc());
+
+        diffs.forEach(diff -> diff.setDiff(getDiffPretty(diff.getId(), song)));
+
+        return diffs;
+    }
+
+    @Override
     public Song undo(Long diffId, Song original) {
-        List<Diff> diffsAll = diffRepository.findByRelativeEntityId(original.getId(), byTimestampDesc());
-
-        if (containsDiff(diffsAll, diffId)) {
-            List<Diff> diffsToApply =
-                    ListUtil.greedyTakeWhile(diffsAll, diff -> !diff.getId().equals(diffId));
-
-            return diffsToApply.stream()
-                    .reduce(original, this::unPatch, (song, song2) -> song2);
-        } else {
-            throw new ResourceNotFoundException("diff", diffId);
-        }
+        Diff diff = diffRepository.findOne(diffId);
+        return applyDiff(original, diff);
     }
 
-    private boolean containsDiff(List<Diff> diffsAll, Long diffId) {
-        return diffsAll.stream().anyMatch(diff -> diff.getId().equals(diffId));
+    @Override
+    public String getDiffPretty(Long diffId, Song song) {
+        Diff diff = diffRepository.findOne(diffId);
+        DiffMatchPatch diffMatchPatch = new DiffMatchPatch();
+        LinkedList<DiffMatchPatch.Diff> diffs = diffMatchPatch.diff_main(diff.getDiff(), createDiffText(song));
+        return diffMatchPatch.diff_prettyHtml(diffs);
     }
 
-    private String createDiffText(Song revised, Song original) {
-        List<String> originalLines = DiffUtil.split(original);
-        List<String> revisedLines = DiffUtil.split(revised);
-        Patch patch = DiffUtils.diff(originalLines, revisedLines);
-        return DiffUtils.generateUnifiedDiff(
-                "original",
-                "revised",
-                originalLines,
-                patch,
-                0)
-                .stream()
-                .collect(Collectors.joining("\n"));
+    private String createDiffText(Song revised) {
+        return String.format("%s^%s", revised.getTitle(), revised.getLyrics());
     }
 
-    @SuppressWarnings("unchecked")
-    private Song unPatch(Song song, Diff diff) {
-        List<String> lines = DiffUtil.split(song);
+    private Song applyDiff(Song song, Diff diff) {
+        Song result = new Song();
 
-        Patch patch = DiffUtils.parseUnifiedDiff(Arrays.asList(diff.getDiff().split("\n")));
-        List<?> list = DiffUtils.unpatch(lines, patch);
+        String[] nodes = diff.getDiff().split("\\^");
 
-        Song patched = DiffUtil.join((List<String>) list);
-        patched.setId(song.getId());
-        patched.setPerformer(song.getPerformer());
-        return patched;
+        String title = nodes[0];
+        String body = StringUtils.join(Arrays.copyOfRange(nodes, 1, nodes.length));
+
+        result.setTitle(title);
+        result.setLyrics(body);
+        result.setId(song.getId());
+        result.setPerformer(song.getPerformer());
+        return result;
     }
 
     private Sort byTimestampDesc() {
