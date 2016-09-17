@@ -62,7 +62,7 @@ public class SongsController {
                 .orElseThrow(IllegalStateException::new);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<SongDto> updateSong(@Valid @RequestBody SongDto songDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new InvalidRequestException(bindingResult);
@@ -70,7 +70,6 @@ public class SongsController {
 
         return Optional.of(songDto)
                 .map(v -> mapper.map(v, Song.class))
-                .map(historyService::createHistory)
                 .map(songService::updateSong)
                 .map(v -> mapper.map(v, SongDto.class))
                 .map(ResponseEntity::ok)

@@ -29,15 +29,10 @@ public class HistoryController {
     @Autowired
     private Mapper mapper;
 
-    @RequestMapping(value = "/{songId}", method = RequestMethod.GET)
-    public ResponseEntity<List<HistoryDto>> getHistory(@PathVariable("songId") final Long songId) {
-        return ResponseEntity.ok(mapper.mapAsList(historyService.getHistoriesBySongId(songId), HistoryDto.class));
-    }
-
     @RequestMapping(value = "/apply", method = RequestMethod.GET)
     public ResponseEntity<SongDto> applyFromHistory(@RequestParam("historyId") final Long historyId) {
         return historyService.getHistory(historyId)
-                .map(history -> historyService.apply(history))
+                .map(historyService::apply)
                 .map(songService::updateSong)
                 .map(song -> mapper.map(song, SongDto.class))
                 .map(ResponseEntity::ok)
@@ -47,7 +42,7 @@ public class HistoryController {
     @RequestMapping(value = "/pretty", method = RequestMethod.GET)
     public ResponseEntity<PrettyDiffDto> getPrettyDiff(@RequestParam("historyId") final Long historyId) {
         return historyService.getHistory(historyId)
-                .map(history -> historyService.prettyDiff(history))
+                .map(historyService::prettyDiff)
                 .map(diff -> mapper.map(diff, PrettyDiffDto.class))
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResourceNotFoundException(historyId));
