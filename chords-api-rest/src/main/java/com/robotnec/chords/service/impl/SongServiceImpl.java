@@ -102,7 +102,7 @@ public class SongServiceImpl implements SongService {
     public Song updateSong(Song song) {
         Long songId = song.getId();
         Optional.ofNullable(songRepository.findOne(songId))
-                .map(this::buildHistory)
+                .map(History::from)
                 .map(historyRepository::save)
                 .orElseThrow(() -> new ResourceNotFoundException("song", songId));
         return createSong(song);
@@ -135,12 +135,5 @@ public class SongServiceImpl implements SongService {
     private Song deleteSong(Song song) {
         songRepository.delete(song.getId());
         return song;
-    }
-
-    private History buildHistory(Song song) {
-        return History.builder()
-                .original(song)
-                .body(song.getLyrics())
-                .build();
     }
 }

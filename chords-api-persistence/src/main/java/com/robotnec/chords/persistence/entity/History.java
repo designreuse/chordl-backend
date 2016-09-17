@@ -36,4 +36,11 @@ public class History {
     public void onCreate() {
         timestamp = new Date();
     }
+
+    public static History from(Song song) {
+        return History.builder()
+                .original(song)
+                .body(song.getLyrics())
+                .build();
+    }
 }
