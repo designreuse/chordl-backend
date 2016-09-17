@@ -31,5 +31,6 @@ public class Song extends BaseEntity {
     private Performer performer;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "original")
+    @OrderBy("timestamp desc")
     private List<History> histories;
 }
