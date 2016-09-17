@@ -4,9 +4,9 @@ DROP TABLE IF EXISTS `history`;
 
 CREATE TABLE `history` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `text_title` TEXT NOT NULL,
-  `text_body` TEXT NOT NULL,
-  `relative_entity_id` INT(11) NOT NULL,
+  `body` TEXT NOT NULL,
+  `song_id` INT(11) NOT NULL,
   `timestamp` DATETIME NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`song_id`) REFERENCES `song` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

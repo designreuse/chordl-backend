@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface HistoryService {
     Optional<History> getHistory(Long id);
 
-    List<History> getHistoryForSongId(Long id);
+    List<History> getHistoriesBySongId(Long id);
 
     Song apply(History history);
 

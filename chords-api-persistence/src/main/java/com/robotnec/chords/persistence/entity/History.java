@@ -23,9 +23,11 @@ public class History {
     @Id
     @GeneratedValue
     private Long id;
-    private String textTitle;
-    private String textBody;
-    private Long relativeEntityId;
+    private String body;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "song_id")
+    private Song original;
 
     @DateTimeFormat(style = "M-")
     private Date timestamp;

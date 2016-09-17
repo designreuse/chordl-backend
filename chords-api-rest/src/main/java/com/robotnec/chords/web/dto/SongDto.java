@@ -1,5 +1,6 @@
 package com.robotnec.chords.web.dto;
 
+import com.robotnec.chords.persistence.entity.History;
 import com.robotnec.chords.web.serializer.Trim;
 import lombok.*;
 
@@ -7,6 +8,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author zak <zak@robotnec.com>
@@ -40,4 +42,6 @@ public class SongDto {
     @Trim
     @Pattern(regexp = "^[^\\\\/<>\\^`{}]+$")
     private String performerName;
+
+    private List<HistoryDto> histories;
 }

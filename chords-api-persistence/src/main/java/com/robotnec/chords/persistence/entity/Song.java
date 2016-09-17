@@ -3,6 +3,7 @@ package com.robotnec.chords.persistence.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * @author zak <zak@robotnec.com>
@@ -17,9 +18,6 @@ import javax.persistence.*;
 @Table(name = "song")
 public class Song extends BaseEntity {
 
-    private static final int TITLE = 0;
-    private static final int BODY = 1;
-
     @Id
     @GeneratedValue
     private Long id;
@@ -31,4 +29,7 @@ public class Song extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "performer_id")
     private Performer performer;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "original")
+    private List<History> histories;
 }

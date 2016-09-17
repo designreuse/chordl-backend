@@ -31,7 +31,7 @@ public class HistoryController {
 
     @RequestMapping(value = "/{songId}", method = RequestMethod.GET)
     public ResponseEntity<List<HistoryDto>> getHistory(@PathVariable("songId") final Long songId) {
-        return ResponseEntity.ok(mapper.mapAsList(historyService.getHistoryForSongId(songId), HistoryDto.class));
+        return ResponseEntity.ok(mapper.mapAsList(historyService.getHistoriesBySongId(songId), HistoryDto.class));
     }
 
     @RequestMapping(value = "/apply", method = RequestMethod.GET)

@@ -10,5 +10,5 @@ import java.util.List;
  * @author zak <zak@robotnec.com>
  */
 public interface HistoryRepository extends PagingAndSortingRepository<History, Long> {
-    List<History> findByRelativeEntityId(Long relativeEntityId, Sort sort);
+//    List<History> findBySongId(Long songId, Sort sort);
 }

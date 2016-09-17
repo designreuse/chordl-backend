@@ -37,8 +37,8 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public List<History> getHistoryForSongId(Long id) {
-        return historyRepository.findByRelativeEntityId(id, byTimestampDesc());
+    public List<History> getHistoriesBySongId(Long id) {
+        return null;//historyRepository.findBySongId(id, byTimestampDesc());
     }
 
     @Override
@@ -53,46 +53,23 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public String prettyDiff(History history) {
-        Long songId = history.getRelativeEntityId();
-        return Optional.ofNullable(songRepository.findOne(songId))
-                .map(song -> createDiff(song, history))
-                .map(diffMatchPatch::diffPrettyHtml)
-                .orElseThrow(() -> new ResourceNotFoundException("song", songId));
-    }
-
-    private LinkedList<DiffMatchPatch.Diff> createDiff(Song song, History history) {
-        LinkedList<DiffMatchPatch.Diff> diff =
-                diffMatchPatch.diffMain(song.getTitle(), history.getTextTitle());
-        LinkedList<DiffMatchPatch.Diff> bodyDiff =
-                diffMatchPatch.diffMain(song.getLyrics(), history.getTextBody());
-        diff.addAll(bodyDiff);
-        return diff;
+        String originalLyrics = history.getOriginal().getLyrics();
+        String historyLyrics = history.getBody();
+        LinkedList<DiffMatchPatch.Diff> diffs = diffMatchPatch.diffMain(originalLyrics, historyLyrics);
+        return diffMatchPatch.diffPrettyHtml(diffs);
     }
 
     @Override
     public Song apply(History history) {
-        Long songId = history.getRelativeEntityId();
-        Song song = Optional.ofNullable(songRepository.findOne(songId))
-                .map(this::copy)
-                .orElseThrow(() -> new ResourceNotFoundException("song", songId));
-
-        song.setTitle(history.getTextTitle());
-        song.setLyrics(history.getTextBody());
-        return song;
+        Song original = history.getOriginal();
+        original.setLyrics(history.getBody());
+        return original;
     }
 
     private History buildHistory(Song song) {
         return History.builder()
-                .relativeEntityId(song.getId())
-                .textTitle(song.getTitle())
-                .textBody(song.getLyrics())
-                .build();
-    }
-
-    private Song copy(Song song) {
-        return Song.builder()
-                .id(song.getId())
-                .performer(song.getPerformer())
+                .original(song)
+                .body(song.getLyrics())
                 .build();
     }
 
