@@ -1,0 +1,12 @@
+SET NAMES 'utf8';
+
+DROP TABLE IF EXISTS `history`;
+
+CREATE TABLE `history` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `body` TEXT NOT NULL,
+  `song_id` INT(11) NOT NULL,
+  `timestamp` DATETIME NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`song_id`) REFERENCES `song` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
