@@ -30,7 +30,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                     .antMatchers("/auth/signin", "/search/**", "/featured/**").permitAll()
-                    .antMatchers(HttpMethod.GET, "/songs/**", "/performers/**", "/diff/**").permitAll()
+                    .antMatchers(HttpMethod.GET, "/songs/**", "/performers/**", "/history/**").permitAll()
                     .antMatchers("/v2/api-docs",
                             "/configuration/ui",
                             "/swagger-resources",
