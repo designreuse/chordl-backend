@@ -30,7 +30,7 @@ public class Song extends BaseEntity {
     @JoinColumn(name = "performer_id")
     private Performer performer;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "original")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "original")
     @OrderBy("timestamp desc")
     private List<History> histories;
 }
