@@ -4,11 +4,12 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author zak <zak@robotnec.com>
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"performer", "histories"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,5 +33,5 @@ public class Song extends BaseEntity {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "original")
     @OrderBy("timestamp desc")
-    private List<History> histories;
+    private Set<History> histories;
 }

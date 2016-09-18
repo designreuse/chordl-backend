@@ -1,9 +1,6 @@
 package com.robotnec.chords.persistence.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -12,6 +9,7 @@ import java.util.Date;
 /**
  * @author zak <zak@robotnec.com>
  */
+@EqualsAndHashCode(exclude = "original")
 @Data
 @Builder
 @Entity

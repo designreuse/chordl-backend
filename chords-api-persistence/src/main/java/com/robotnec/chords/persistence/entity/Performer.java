@@ -5,11 +5,12 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author zak <zak@robotnec.com>
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "songs")
 @Data
 @Entity
 @Table(name = "performer")
@@ -22,5 +23,5 @@ public class Performer extends BaseEntity {
     private String name;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "performer")
-    private List<Song> songs;
+    private Set<Song> songs;
 }

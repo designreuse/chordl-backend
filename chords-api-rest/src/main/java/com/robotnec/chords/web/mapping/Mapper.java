@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +48,7 @@ public class Mapper {
                     @Override
                     public void mapAtoB(Performer a, PerformerDto b, MappingContext context) {
                         Optional.ofNullable(a.getSongs())
-                                .map(List::size)
+                                .map(Set::size)
                                 .ifPresent(b::setSongCount);
                     }
                 })
