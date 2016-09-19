@@ -32,7 +32,7 @@ public class History {
     private Date timestamp;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", updatable = false)
     private ChordsUser createdBy;
 
     @PrePersist

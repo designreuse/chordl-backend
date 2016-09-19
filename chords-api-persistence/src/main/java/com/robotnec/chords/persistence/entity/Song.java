@@ -36,6 +36,6 @@ public class Song extends BaseEntity {
     private List<History> histories;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", updatable = false)
     private ChordsUser createdBy;
 }
