@@ -1,5 +1,6 @@
 package com.robotnec.chords.persistence.entity;
 
+import com.robotnec.chords.persistence.entity.user.ChordsUser;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -9,7 +10,7 @@ import java.util.Date;
 /**
  * @author zak <zak@robotnec.com>
  */
-@EqualsAndHashCode(exclude = "original")
+@EqualsAndHashCode(exclude = {"original", "createdBy"})
 @Data
 @Builder
 @Entity
@@ -29,6 +30,10 @@ public class History {
 
     @DateTimeFormat(style = "M-")
     private Date timestamp;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private ChordsUser createdBy;
 
     @PrePersist
     public void onCreate() {

@@ -43,4 +43,6 @@ public class SongDto {
     private String performerName;
 
     private List<HistoryDto> histories;
+
+    private UserNameDto createdBy;
 }

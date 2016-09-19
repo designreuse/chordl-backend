@@ -1,15 +1,15 @@
 package com.robotnec.chords.persistence.entity;
 
+import com.robotnec.chords.persistence.entity.user.ChordsUser;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author zak <zak@robotnec.com>
  */
-@EqualsAndHashCode(callSuper = true, exclude = {"performer", "histories"})
+@EqualsAndHashCode(callSuper = true, exclude = {"performer", "histories", "createdBy"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,5 +33,9 @@ public class Song extends BaseEntity {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "original")
     @OrderBy("timestamp desc")
-    private Set<History> histories;
+    private List<History> histories;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private ChordsUser createdBy;
 }

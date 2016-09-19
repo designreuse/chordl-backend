@@ -5,13 +5,14 @@ import com.robotnec.chords.exception.InvalidRequestException;
 import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Song;
-import com.robotnec.chords.service.HistoryService;
 import com.robotnec.chords.service.SongService;
+import com.robotnec.chords.service.UserService;
 import com.robotnec.chords.web.dto.SongDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class SongsController {
     private SongService songService;
 
     @Autowired
-    private HistoryService historyService;
+    private UserService userService;
 
     @Autowired
     private Mapper mapper;
@@ -56,6 +57,7 @@ public class SongsController {
 
         return Optional.of(songDto)
                 .map(v -> mapper.map(v, Song.class))
+                .map(this::setUser)
                 .map(songService::createSong)
                 .map(v -> mapper.map(v, SongDto.class))
                 .map(ResponseEntity::ok)
@@ -98,5 +100,14 @@ public class SongsController {
                 .map(v -> mapper.map(v, SongDto.class))
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new WrongArgumentException(String.format("Song with id '%s' not found", id)));
+    }
+
+    private Song setUser(Song song) {
+        return userService.getCurrent()
+                .map(user -> {
+                    song.setCreatedBy(user);
+                    return song;
+                })
+                .orElseThrow(() -> new AuthenticationCredentialsNotFoundException("Not logged in"));
     }
 }

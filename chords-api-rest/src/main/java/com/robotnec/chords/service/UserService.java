@@ -10,5 +10,5 @@ public interface UserService {
 
     Optional<ChordsUser> findByEmail(String email);
 
-    Optional<ChordsUser> findById(long userId);
+    Optional<ChordsUser> getCurrent();
 }
