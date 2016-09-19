@@ -1,5 +1,6 @@
 package com.robotnec.chords.web;
 
+import com.robotnec.chords.config.access.AdminAccess;
 import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.service.HistoryService;
 import com.robotnec.chords.service.SongService;
@@ -29,6 +30,7 @@ public class HistoryController {
     @Autowired
     private Mapper mapper;
 
+    @AdminAccess
     @RequestMapping(value = "/apply", method = RequestMethod.GET)
     public ResponseEntity<SongDto> applyFromHistory(@RequestParam("historyId") Long historyId) {
         return historyService.getHistory(historyId)

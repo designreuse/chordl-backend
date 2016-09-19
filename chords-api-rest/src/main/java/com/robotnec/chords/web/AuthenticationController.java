@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.security.Principal;
 
 @Slf4j
 @RestController
@@ -42,9 +41,8 @@ public class AuthenticationController {
     private Mapper mapper;
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
-    public ResponseEntity me(Principal principal) {
-        log.debug("Call 'me' endpoint, current principal: {}", principal.getName());
-        return userService.findByEmail(principal.getName())
+    public ResponseEntity me() {
+        return userService.getCurrent()
                 .map(chordsUser -> mapper.map(chordsUser, ChordsUserDto.class))
                 .map(ResponseEntity::ok)
                 .orElse(null);

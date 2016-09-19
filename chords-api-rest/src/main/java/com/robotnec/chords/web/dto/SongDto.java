@@ -1,6 +1,5 @@
 package com.robotnec.chords.web.dto;
 
-import com.robotnec.chords.persistence.entity.History;
 import com.robotnec.chords.web.serializer.Trim;
 import lombok.*;
 
@@ -44,4 +43,6 @@ public class SongDto {
     private String performerName;
 
     private List<HistoryDto> histories;
+
+    private UserNameDto createdBy;
 }
