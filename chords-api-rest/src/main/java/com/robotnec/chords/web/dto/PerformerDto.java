@@ -21,7 +21,6 @@ public class PerformerDto {
 
     @Trim
     @Size(min = 2, max = 60)
-    @Pattern(regexp = "^[^\\\\/<>\\^`{}]+$")
     private String name;
 
     private Date createdDate;

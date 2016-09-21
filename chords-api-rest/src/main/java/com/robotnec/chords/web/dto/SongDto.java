@@ -23,12 +23,10 @@ public class SongDto {
 
     @Trim
     @Size(min = 2, max = 60)
-    @Pattern(regexp = "^[^\\\\/<>\\^`{}]+$")
     private String title;
 
     @Trim
     @Size(min = 2)
-    @Pattern(regexp = "^[^\\\\/<>\\^`{}]+$")
     private String lyrics;
 
     private Date createdDate;
@@ -39,7 +37,6 @@ public class SongDto {
     private long performerId;
 
     @Trim
-    @Pattern(regexp = "^[^\\\\/<>\\^`{}]+$")
     private String performerName;
 
     private List<HistoryDto> histories;
