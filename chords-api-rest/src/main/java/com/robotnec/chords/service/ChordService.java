@@ -15,4 +15,6 @@ public interface ChordService {
     Chord deleteChord(long id);
 
     List<Chord> getChords();
+
+    Chord hydrateChord(Chord chord);
 }

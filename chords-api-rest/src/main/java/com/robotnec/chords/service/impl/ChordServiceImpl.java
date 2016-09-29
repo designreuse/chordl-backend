@@ -46,6 +46,12 @@ public class ChordServiceImpl implements ChordService {
         return chords;
     }
 
+    @Override
+    public Chord hydrateChord(Chord chord) {
+        return Optional.ofNullable(chordRepository.findByName(chord.getName()))
+                .orElse(chord);
+    }
+
     private Chord deleteChord(Chord song) {
         chordRepository.delete(song.getId());
         return song;

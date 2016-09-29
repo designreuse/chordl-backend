@@ -6,6 +6,7 @@ import com.robotnec.chords.exception.WrongArgumentException;
 import com.robotnec.chords.persistence.entity.Chord;
 import com.robotnec.chords.service.ChordService;
 import com.robotnec.chords.web.dto.GuitarChordDto;
+import com.robotnec.chords.web.dto.GuitarChordInputDto;
 import com.robotnec.chords.web.mapping.Mapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -28,10 +30,19 @@ public class ChordController {
     @Autowired
     private Mapper mapper;
 
-    @AdminAccess
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<GuitarChordDto>> getChords() {
-        return ResponseEntity.ok(mapper.mapAsList(chordService.getChords(), GuitarChordDto.class));
+    public ResponseEntity<List<GuitarChordDto>> hydrateChords(@Valid @RequestBody GuitarChordInputDto guitarChordInputDto,
+                                                           BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new InvalidRequestException(bindingResult);
+        }
+
+        List<GuitarChordDto> hydratedChords = guitarChordInputDto.getInput().stream()
+                .map(chordDto -> mapper.map(chordDto, Chord.class))
+                .map(chordService::hydrateChord)
+                .map(chord -> mapper.map(chord, GuitarChordDto.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(hydratedChords);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -46,6 +57,12 @@ public class ChordController {
                 .map(v -> mapper.map(v, GuitarChordDto.class))
                 .map(ResponseEntity::ok)
                 .orElseThrow(IllegalStateException::new);
+    }
+
+    @AdminAccess
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<List<GuitarChordDto>> getChords() {
+        return ResponseEntity.ok(mapper.mapAsList(chordService.getChords(), GuitarChordDto.class));
     }
 
     @AdminAccess
