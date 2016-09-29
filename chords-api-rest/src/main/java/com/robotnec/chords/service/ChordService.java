@@ -2,6 +2,7 @@ package com.robotnec.chords.service;
 
 import com.robotnec.chords.persistence.entity.Chord;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ChordService {
@@ -12,4 +13,6 @@ public interface ChordService {
     Chord updateChord(Chord chord);
 
     Chord deleteChord(long id);
+
+    List<Chord> getChords();
 }

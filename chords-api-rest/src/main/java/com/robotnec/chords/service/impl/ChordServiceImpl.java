@@ -5,9 +5,13 @@ import com.robotnec.chords.persistence.entity.Chord;
 import com.robotnec.chords.persistence.repository.ChordRepository;
 import com.robotnec.chords.service.ChordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+@Service
 public class ChordServiceImpl implements ChordService {
 
     @Autowired
@@ -33,6 +37,13 @@ public class ChordServiceImpl implements ChordService {
         return Optional.ofNullable(chordRepository.findOne(id))
                 .map(this::deleteChord)
                 .orElseThrow(() -> new WrongArgumentException(String.format("Chord with id '%s' not found", id)));
+    }
+
+    @Override
+    public List<Chord> getChords() {
+        List<Chord> chords = new ArrayList<>();
+        chordRepository.findAll().forEach(chords::add);
+        return chords;
     }
 
     private Chord deleteChord(Chord song) {
