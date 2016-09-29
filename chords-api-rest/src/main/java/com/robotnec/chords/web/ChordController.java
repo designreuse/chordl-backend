@@ -30,6 +30,7 @@ public class ChordController {
     @Autowired
     private Mapper mapper;
 
+    @RequestMapping(value = "/hydrate", method = RequestMethod.POST)
     public ResponseEntity<List<GuitarChordDto>> hydrateChords(@Valid @RequestBody GuitarChordInputDto guitarChordInputDto,
                                                            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
