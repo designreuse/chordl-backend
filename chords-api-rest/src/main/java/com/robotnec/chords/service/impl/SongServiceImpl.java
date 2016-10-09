@@ -1,14 +1,19 @@
 package com.robotnec.chords.service.impl;
 
+import com.robotnec.chords.exception.ResourceNotFoundException;
 import com.robotnec.chords.exception.WrongArgumentException;
+import com.robotnec.chords.persistence.entity.History;
 import com.robotnec.chords.persistence.entity.Performer;
 import com.robotnec.chords.persistence.entity.Song;
 import com.robotnec.chords.persistence.entity.SongSolrDocument;
+import com.robotnec.chords.persistence.repository.HistoryRepository;
 import com.robotnec.chords.persistence.repository.PerformerRepository;
 import com.robotnec.chords.persistence.repository.SongRepository;
 import com.robotnec.chords.persistence.repository.SongSolrRepository;
 import com.robotnec.chords.service.SongService;
+import com.robotnec.chords.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +37,12 @@ public class SongServiceImpl implements SongService {
 
     @Autowired
     private PerformerRepository performerRepository;
+
+    @Autowired
+    private HistoryRepository historyRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public Optional<Song> getSong(long id) {
@@ -94,6 +105,12 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public Song updateSong(Song song) {
+        Long songId = song.getId();
+        Optional.ofNullable(songRepository.findOne(songId))
+                .map(History::from)
+                .map(this::setName)
+                .map(historyRepository::save)
+                .orElseThrow(() -> new ResourceNotFoundException("song", songId));
         return createSong(song);
     }
 
@@ -124,5 +141,14 @@ public class SongServiceImpl implements SongService {
     private Song deleteSong(Song song) {
         songRepository.delete(song.getId());
         return song;
+    }
+
+    private History setName(History history) {
+        return userService.getCurrent()
+                .map(user -> {
+                    history.setCreatedBy(user);
+                    return history;
+                })
+                .orElseThrow(() -> new AuthenticationCredentialsNotFoundException("Not logged in"));
     }
 }

@@ -29,15 +29,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .antMatchers("/auth/signin", "/search/**", "/featured/**").permitAll()
-                    .antMatchers(HttpMethod.GET, "/songs/**", "/performers/**").permitAll()
+                    .antMatchers("/auth/signin", "/search/**", "/featured/**", "/chord/hydrate").permitAll()
+                    .antMatchers(HttpMethod.GET, "/songs/**", "/performers/**", "/history/**", "/chord/**").permitAll()
                     .antMatchers("/v2/api-docs",
                             "/configuration/ui",
                             "/swagger-resources",
                             "/configuration/security",
                             "/swagger-ui.html",
                             "/webjars/**").hasRole("ADMIN")
-                    .anyRequest().authenticated()
+                .anyRequest().authenticated()
+//                .anyRequest().anonymous()
                     .and()
                 .exceptionHandling()
                     .authenticationEntryPoint(unauthorizedHandler)

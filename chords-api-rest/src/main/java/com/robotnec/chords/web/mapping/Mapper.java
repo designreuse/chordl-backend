@@ -23,6 +23,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -41,19 +43,13 @@ public class Mapper {
                 .field("performer.name", "performerName")
                 .byDefault()
                 .register();
-        mapperFactory.classMap(Song.class, Song.class)
-                .exclude("id")
-                .mapNulls(false)
-                .byDefault()
-                .register();
         mapperFactory.classMap(Performer.class, PerformerDto.class)
                 .customize(new CustomMapper<Performer, PerformerDto>() {
                     @Override
                     public void mapAtoB(Performer a, PerformerDto b, MappingContext context) {
-                        List<Song> songs = a.getSongs();
-                        if (songs != null) {
-                            b.setSongCount(songs.size());
-                        }
+                        Optional.ofNullable(a.getSongs())
+                                .map(Set::size)
+                                .ifPresent(b::setSongCount);
                     }
                 })
                 .byDefault()

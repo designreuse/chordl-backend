@@ -2,7 +2,7 @@ package com.robotnec.chords.web.dto;
 
 import lombok.*;
 
-import java.util.List;
+import java.util.Date;
 
 /**
  * @author zak <zak@robotnec.com>
@@ -13,8 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @ToString
-public class ChordsUserDto {
+public class HistoryDto {
     private Long id;
-    private String name;
-    private List<String> authorities;
+    private Date timestamp;
+    private UserNameDto createdBy;
 }

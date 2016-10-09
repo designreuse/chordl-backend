@@ -2,8 +2,6 @@ package com.robotnec.chords.web.dto;
 
 import lombok.*;
 
-import java.util.List;
-
 /**
  * @author zak <zak@robotnec.com>
  */
@@ -13,8 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @ToString
-public class ChordsUserDto {
+public class UserNameDto {
     private Long id;
     private String name;
-    private List<String> authorities;
 }

@@ -38,7 +38,7 @@ jwt:
   header: Authorization
   scheme: Bearer
   secret: ${JWT_SECRET}
-  expiration: 60000
+  expiration: 172800
 
 flyway:
   db:
@@ -53,7 +53,7 @@ endpoints:
 logging:
   level:
     com.robotnec.chords: DEBUG
-    org.springframework.web: WARN
+    org.springframework.web: DEBUG
     org.hibernate: WARN
     ma.glasnost.orika: WARN
 

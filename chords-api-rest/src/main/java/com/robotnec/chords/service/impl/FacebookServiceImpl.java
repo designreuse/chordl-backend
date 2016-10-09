@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.User;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
-import org.springframework.social.facebook.connect.FacebookConnectionFactory;
-import org.springframework.social.oauth2.OAuth2Operations;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -32,19 +30,13 @@ public class FacebookServiceImpl implements FacebookService {
     public Optional<User> validateFacebookUser(CredentialsDto credentials) {
         log.debug("Check user token");
 
-        String applicationAccessToken = fetchApplicationAccessToken();
-
-        log.debug("Got app access token: {}", applicationAccessToken);
-
         UriComponentsBuilder builder =
                 UriComponentsBuilder.fromHttpUrl("https://graph.facebook.com/debug_token")
                         .queryParam("input_token", credentials.getSocialToken())
-                        .queryParam("access_token", applicationAccessToken);
+                        .queryParam("access_token", getApplicationAccessToken());
 
         RestTemplate restTemplate = new RestTemplate();
         URI url = builder.build().encode().toUri();
-
-        log.debug("Send request to FB: {}", url);
 
         ResponseEntity<FacebookCheckTokenResponseDto> response =
                 restTemplate.getForEntity(
@@ -75,8 +67,7 @@ public class FacebookServiceImpl implements FacebookService {
         return Optional.ofNullable(userProfile);
     }
 
-
-    private String fetchApplicationAccessToken() {
-        return fbAppId + "|" + fbAppSecret;
+    private String getApplicationAccessToken() {
+        return String.format("%s|%s", fbAppId, fbAppSecret);
     }
 }

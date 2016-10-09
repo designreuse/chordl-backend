@@ -4,8 +4,10 @@ import com.robotnec.chords.persistence.entity.user.ChordsUser;
 import com.robotnec.chords.persistence.repository.UserRepository;
 import com.robotnec.chords.service.RoleService;
 import com.robotnec.chords.service.UserService;
+import com.robotnec.chords.user.ChordsUserWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +27,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ChordsUser save(ChordsUser user) {
         // TODO handle better
-        if (user.getFacebookUserId().equals("10210108552656409")) {
+        if (user.getEmail().equals("zapylaev@gmail.com")) {
             user.setRoles(roleService.getAdminRoles());
         } else {
             user.setRoles(roleService.getUserRoles());
@@ -48,7 +50,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<ChordsUser> findById(long userId) {
-        return Optional.ofNullable(userRepository.findOne(userId));
+    public Optional<ChordsUser> getCurrent() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return Optional.ofNullable((ChordsUserWrapper) principal)
+                .map(ChordsUserWrapper::getChordsUser);
     }
 }
