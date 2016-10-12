@@ -49,7 +49,6 @@
         <swagger.version>2.0.3</swagger.version>
         <jackson.version>2.5.4</jackson.version>
         <orika-core.version>1.4.5</orika-core.version>
-        <!--<data-solr.version>2.1.0.BUILD-SNAPSHOT</data-solr.version>-->
         <flyway.clean>true</flyway.clean>
     </properties>
 
